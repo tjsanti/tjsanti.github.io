@@ -1,0 +1,18 @@
+---
+const trace = [
+  ["input", "messy workflows"],
+  ["structure", "data, constraints, interfaces"],
+  ["assist", "models, agents, tools"],
+  ["validate", "review, evals, checks"],
+  ["ship", "useful systems"],
+];
+---
+
+<aside class="trace-rail" aria-label="Workflow trace">
+  {trace.map(([label, value]) => (
+    <div class="trace-step">
+      <span>{label}</span>
+      <strong>{value}</strong>
+    </div>
+  ))}
+</aside>

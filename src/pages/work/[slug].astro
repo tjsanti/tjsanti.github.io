@@ -1,0 +1,88 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Footer from "../../components/Footer.astro";
+import Header from "../../components/Header.astro";
+
+type WorkFrontmatter = {
+  title: string;
+  summary: string;
+  year?: number;
+  role?: string;
+  tags?: string[];
+  links?: {
+    github?: string;
+    demo?: string;
+    source?: string;
+  };
+};
+
+type WorkModule = {
+  frontmatter: WorkFrontmatter;
+  Content: unknown;
+};
+
+export async function getStaticPaths() {
+  const modules = import.meta.glob<WorkModule>("../../content/work/*.md");
+
+  return Promise.all(
+    Object.entries(modules).map(async ([path, load]) => {
+      const module = await load();
+      const slug = path.split("/").pop()?.replace(/\.md$/, "") ?? "";
+
+      return {
+        params: { slug },
+        props: { module },
+      };
+    }),
+  );
+}
+
+const { module } = Astro.props;
+const { title, summary, year, role } = module.frontmatter;
+const tags = module.frontmatter.tags ?? [];
+const links = module.frontmatter.links ?? {};
+const Content = module.Content;
+---
+
+<BaseLayout title={`${title} | Trevor Santiago`} description={summary}>
+  <Header />
+  <main class="writeup">
+    <a class="back-link" href="/#work">Back home</a>
+    <header class="writeup-header">
+      <p class="eyebrow">Work brief</p>
+      <h1>{title}</h1>
+      <p>{summary}</p>
+      <dl class="meta-grid">
+        {year && (
+          <>
+            <dt>Year</dt>
+            <dd>{year}</dd>
+          </>
+        )}
+        {role && (
+          <>
+            <dt>Role</dt>
+            <dd>{role}</dd>
+          </>
+        )}
+        {tags.length > 0 && (
+          <>
+            <dt>Tags</dt>
+            <dd>{tags.join(", ")}</dd>
+          </>
+        )}
+      </dl>
+      {(links.github || links.demo || links.source) && (
+        <div class="link-row">
+          {links.github && <a href={links.github} target="_blank" rel="noreferrer">GitHub</a>}
+          {links.demo && <a href={links.demo} target="_blank" rel="noreferrer">Demo</a>}
+          {links.source && <a href={links.source} target="_blank" rel="noreferrer">Source</a>}
+        </div>
+      )}
+    </header>
+    <article class="prose">
+      <Content />
+    </article>
+  </main>
+  <Footer />
+</BaseLayout>

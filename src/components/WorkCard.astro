@@ -1,0 +1,43 @@
+---
+type LinkSet = {
+  github?: string;
+  demo?: string;
+  source?: string;
+};
+
+type Props = {
+  href: string;
+  title: string;
+  summary: string;
+  year?: number;
+  role?: string;
+  tags?: string[];
+  links?: LinkSet;
+};
+
+const { href, title, summary, year, role, tags = [], links = {} } = Astro.props;
+---
+
+<article class="work-card">
+  <a class="work-card-main" href={href}>
+    <div class="work-card-heading">
+      <h3>{title}</h3>
+      {year && <span>{year}</span>}
+    </div>
+    <p>{summary}</p>
+    {tags.length > 0 && (
+      <ul class="tag-list" aria-label={`${title} tags`}>
+        {tags.map((tag) => <li>{tag}</li>)}
+      </ul>
+    )}
+    {role && <p class="work-role">{role}</p>}
+    <span class="read-link">Read more</span>
+  </a>
+  {(links.github || links.demo || links.source) && (
+    <div class="external-links" aria-label={`${title} links`}>
+      {links.github && <a href={links.github} target="_blank" rel="noreferrer">GitHub</a>}
+      {links.demo && <a href={links.demo} target="_blank" rel="noreferrer">Demo</a>}
+      {links.source && <a href={links.source} target="_blank" rel="noreferrer">Source</a>}
+    </div>
+  )}
+</article>

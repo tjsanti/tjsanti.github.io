@@ -1,0 +1,129 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Footer from "../components/Footer.astro";
+import Header from "../components/Header.astro";
+import TraceRail from "../components/TraceRail.astro";
+import WorkCard from "../components/WorkCard.astro";
+
+type WorkFrontmatter = {
+  title: string;
+  summary: string;
+  year?: number;
+  role?: string;
+  tags?: string[];
+  links?: {
+    github?: string;
+    demo?: string;
+    source?: string;
+  };
+};
+
+const modules = import.meta.glob<{ frontmatter: WorkFrontmatter }>("../content/work/*.md", {
+  eager: true,
+});
+
+const work = Object.entries(modules)
+  .map(([path, module]) => ({
+    slug: path.split("/").pop()?.replace(/\.md$/, "") ?? "",
+    data: {
+      tags: [],
+      links: {},
+      ...module.frontmatter,
+    },
+  }))
+  .sort((a, b) => (b.data.year ?? 0) - (a.data.year ?? 0));
+---
+
+<BaseLayout>
+  <Header />
+
+  <main>
+    <section class="hero section">
+      <div class="hero-copy">
+        <p class="eyebrow">AI engineering portfolio</p>
+        <h1>Trevor Santiago</h1>
+        <p class="lede">AI engineer building full-stack, agentic, and LLM-powered systems.</p>
+        <p>
+          I am moving from data science into AI engineering, with experience building data
+          pipelines, ML/NLP workflows, and practical systems around messy real-world data.
+        </p>
+        <div class="link-row" aria-label="Profile links">
+          <a href="https://github.com/tjsanti" target="_blank" rel="noreferrer">GitHub</a>
+          <a href="https://www.linkedin.com/in/trevor-santiago/" target="_blank" rel="noreferrer">LinkedIn</a>
+          <a href="/resume.pdf">Resume</a>
+        </div>
+      </div>
+      <TraceRail />
+    </section>
+
+    <section class="section" id="work">
+      <div class="section-heading">
+        <p class="eyebrow">Work</p>
+        <h2>Technical writeups and builds</h2>
+      </div>
+      {work.length > 0 ? (
+        <div class="work-list">
+          {work.map((item) => (
+            <WorkCard
+              href={`/work/${item.slug}/`}
+              title={item.data.title}
+              summary={item.data.summary}
+              year={item.data.year}
+              role={item.data.role}
+              tags={item.data.tags}
+              links={item.data.links}
+            />
+          ))}
+        </div>
+      ) : (
+        <div class="empty-work">
+          <p>
+            This section is ready for project writeups. The first entries will focus on
+            AI-assisted content workflows and LLM-enriched data pipelines.
+          </p>
+          <p class="empty-note">Add a Markdown file in <code>src/content/work</code> to publish one.</p>
+        </div>
+      )}
+    </section>
+
+    <section class="section" id="build">
+      <div class="section-heading">
+        <p class="eyebrow">How I build</p>
+        <h2>Practical systems around ambiguous workflows</h2>
+      </div>
+      <div class="capability-grid">
+        <article>
+          <h3>Structure messy workflows</h3>
+          <p>Turn ambiguous processes into clear states, inputs, interfaces, and review points.</p>
+        </article>
+        <article>
+          <h3>Use models as components</h3>
+          <p>Build around LLMs and tools where they improve text-heavy or judgment-heavy work.</p>
+        </article>
+        <article>
+          <h3>Keep validation close</h3>
+          <p>Design workflows with checks, evals, review, and failure handling near the output.</p>
+        </article>
+        <article>
+          <h3>Ship practical interfaces</h3>
+          <p>Care about the product layer: what the user sees, controls, trusts, and repeats.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="about section" id="about">
+      <div>
+        <p class="eyebrow">About</p>
+        <h2>From data science to AI engineering</h2>
+      </div>
+      <p>
+        My background is in applied data science: ML/NLP workflows, data pipelines,
+        model-driven analysis, and systems built around imperfect real-world data.
+        I am now focused on the engineering layer around AI: useful interfaces,
+        reliable workflows, tool use, validation, and deployment.
+      </p>
+    </section>
+  </main>
+
+  <Footer />
+</BaseLayout>
