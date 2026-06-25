@@ -102,7 +102,7 @@ nav a {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(320px, 0.72fr);
   gap: clamp(32px, 7vw, 96px);
-  align-items: start;
+  align-items: stretch;
   min-height: 68vh;
   padding-top: 96px;
 }
@@ -158,6 +158,10 @@ nav a {
 
 .trace-rail {
   position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: min(64vh, 620px);
   padding: 22px 0 8px 34px;
   font-family: "IBM Plex Mono", ui-monospace, monospace;
 }
@@ -177,7 +181,7 @@ nav a {
   display: grid;
   grid-template-columns: 96px 1fr;
   gap: 16px;
-  padding: 0 0 34px;
+  padding: 0;
 }
 
 .trace-step::before {
@@ -458,6 +462,10 @@ code {
   .hero {
     min-height: auto;
     padding-top: 56px;
+  }
+
+  .trace-rail {
+    min-height: 420px;
   }
 
   .capability-grid {
