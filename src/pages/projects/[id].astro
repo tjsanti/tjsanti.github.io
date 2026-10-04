@@ -1,0 +1,31 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import { portfolio } from '../../data/portfolio';
+
+export function getStaticPaths() {
+  return portfolio.projects.map(project => ({ params: { id: project.id }, props: { project } }));
+}
+
+const { project } = Astro.props;
+const currentIndex = portfolio.projects.findIndex(item => item.id === project.id);
+const nextProject = portfolio.projects[(currentIndex + 1) % portfolio.projects.length];
+---
+
+<BaseLayout title={`${project.title} · ${portfolio.name}`} description={project.summary}>
+  <Header />
+  <main id="main-content" class="project-page">
+    <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/profile/#projects">Profile</a><span aria-hidden="true">/</span><span>Project details</span></nav>
+    <header class="project-intro"><p class="pixel-label">{project.featured ? 'FEATURED PROJECT' : 'PROJECT ARCHIVE'}</p><h1>{project.title}</h1><p class="project-summary">{project.summary}</p><ul class="project-tags" aria-label="Project technologies">{project.tags.map(tag => <li>{tag}</li>)}</ul></header>
+    <p class="preview-notice">Preview content. This project is a made-up example for testing the site.</p>
+    <div class="project-body"><article aria-label={`${project.title} case study`} class="case-study"><h2>Project notes</h2>{project.detail.map(paragraph => <p>{paragraph}</p>)}</article><aside class="project-aside"><div><p class="pixel-label">ALSO IN THE HALL</p><img src="/art/garden-hall.png" alt="A view of the pixel art Garden hall." width="1536" height="1024" /><p>Read the same project in its Evidence panel while exploring the hall.</p><a href="/explore/">Enter the Game <span aria-hidden="true">↗</span></a></div><a class="back-link" href={`/profile/#${project.id}`}>Back to this project in the Profile <span aria-hidden="true">←</span></a></aside></div>
+    <nav class="project-bottom" aria-label="Continue reading"><a href="/profile/#projects">All projects <span aria-hidden="true">←</span></a>{nextProject && nextProject.id !== project.id && <a href={`/projects/${nextProject.id}/`}><span class="next-label">NEXT PROJECT</span>{nextProject.title} <span aria-hidden="true">→</span></a>}</nav>
+  </main>
+  <Footer />
+</BaseLayout>
+
+<style>
+  .project-page{max-width:1080px;margin:auto;padding:50px 38px 80px;color:#203a31;font-family:'IBM Plex Sans',sans-serif}.breadcrumbs{display:flex;gap:13px;align-items:center;font-size:13px;color:#728169;margin-bottom:48px}.breadcrumbs a{color:#486043;text-underline-offset:4px}.pixel-label{font:8px/1.9 'Press Start 2P',monospace;letter-spacing:.07em;color:#627b53;margin:0 0 22px}.project-intro{max-width:800px}.project-intro h1{font-size:clamp(35px,5vw,58px);font-weight:500;line-height:1.15;letter-spacing:-.04em;margin:0 0 24px}.project-summary{font-size:22px;line-height:1.6;color:#60705c;margin:0 0 25px}.project-tags{padding:0;list-style:none;display:flex;flex-wrap:wrap;gap:9px}.project-tags li{padding:5px 11px;background:#e9efdf;border:1px solid #d1dcc4;color:#647958;font-size:12px}.preview-notice{font-size:13px;color:#728169;padding:17px 0;border-top:1px solid #d3dccb;border-bottom:1px solid #d3dccb;margin:35px 0 50px}.project-body{display:grid;grid-template-columns:minmax(0,1fr) 240px;gap:65px}.case-study h2{font-size:26px;font-weight:500;margin:0 0 22px;letter-spacing:-.02em}.case-study p{font-size:17px;line-height:1.9;margin:0 0 25px;color:#4d6252}.project-aside>div{border:1px solid #c8d4bc;background:#f7faf0;padding:18px;box-shadow:4px 4px #dce4d0}.project-aside .pixel-label{font-size:7px;margin-bottom:17px}.project-aside img{width:100%;height:132px;object-fit:cover;image-rendering:pixelated;border:2px solid #c5d0b3}.project-aside p:not(.pixel-label){font-size:13px;line-height:1.7;color:#6a785e}.project-aside a{font-size:13px;text-underline-offset:4px}.project-aside a span{margin-left:6px}.back-link{display:block;margin-top:25px;line-height:1.7}.project-bottom{border-top:1px solid #cbd7c2;margin-top:55px;padding-top:26px;display:flex;gap:30px;align-items:center;justify-content:space-between}.project-bottom a{font-size:15px;text-decoration:none;max-width:55%}.project-bottom a:last-child{text-align:right}.project-bottom span:not(.next-label){margin-left:10px}.next-label{display:block;font:7px/1.9 'Press Start 2P',monospace;color:#7b886d;margin-bottom:10px}a:hover{color:#9b7d42}a:focus-visible{outline:3px solid #a18547;outline-offset:5px}
+  @media(max-width:750px){.project-page{padding:30px 22px 55px}.breadcrumbs{margin-bottom:35px}.project-body{grid-template-columns:1fr;gap:28px}.project-summary{font-size:19px}.project-aside{max-width:380px}.case-study p{font-size:16px}.preview-notice{margin:30px 0 35px}.project-bottom{gap:20px}.project-bottom a{font-size:13px}}
+</style>

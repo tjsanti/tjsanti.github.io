@@ -1,0 +1,62 @@
+---
+interface Props { id?: string }
+const { id = 'ask-preview' } = Astro.props;
+---
+<section class="ask-panel" data-ask-panel aria-labelledby={`${id}-title`}>
+  <div class="ask-heading"><h3 id={`${id}-title`}>Ask about Trevor</h3><span class="demo-label">LOCAL DEMO</span></div>
+  <p class="ask-notice">Local demo, canned responses. No AI service connected. Nothing sent off this device.</p>
+  <div class="ask-conversation" data-ask-conversation role="log" aria-label="Demo conversation" aria-live="polite" aria-relevant="additions">
+    <p class="ask-welcome">Try a sample question to see how answers and evidence links will appear. The content is fictional.</p>
+  </div>
+  <form data-ask-form>
+    <label for={`${id}-question`}>Your question</label>
+    <textarea id={`${id}-question`} name="question" data-ask-input rows="3" maxlength="2000" placeholder="Ask about a project, skills, or experience…" required></textarea>
+    <div class="ask-suggestions" aria-label="Suggested questions">
+      <button type="button" data-ask-suggestion="What is Field notes?">What is Field notes?</button>
+      <button type="button" data-ask-suggestion="What skills are in the sample Profile?">What skills are listed?</button>
+    </div>
+    <div class="ask-actions"><button class="ask-submit" type="submit" data-ask-submit>Ask question <span aria-hidden="true">↗</span></button><button type="button" data-ask-reset>Reset conversation</button></div>
+    <p class="ask-status" data-ask-status role="status" aria-live="polite"></p>
+  </form>
+  <details class="ask-demo-controls"><summary>Preview controls</summary><p>Try the unavailable state without connecting a provider.</p><button type="button" data-ask-failure aria-pressed="false">Fail next reply</button></details>
+  <noscript><p>This conversation preview needs JavaScript. All sample evidence is available in the Profile.</p></noscript>
+</section>
+
+<script>
+  import '../scripts/ask';
+</script>
+
+<style>
+  .ask-panel { color: var(--ink, #192d2b); font-family: var(--body, 'IBM Plex Sans', Arial, sans-serif); }
+  .ask-heading { display:flex; align-items:center; gap:16px; flex-wrap:wrap; margin-bottom:12px; }
+  .ask-heading h3 { font-size:1.35rem; line-height:1.3; margin:0; }
+  .demo-label { font-size:10px; font-weight:600; letter-spacing:.1em; background:#d9dfbc; border:1px solid #82967d; padding:4px 7px; }
+  .ask-notice { font-size:.88rem; line-height:1.6; margin:0 0 16px; max-width:60ch; }
+  .ask-conversation { display:grid; gap:14px; max-height:360px; overflow:auto; overscroll-behavior:contain; margin-bottom:20px; padding:16px; background:#f4f0dc; border:1px solid #b2b69b; }
+  .ask-welcome { color:#5c6758; font-size:.94rem; line-height:1.6; margin:0; }
+  .ask-panel form { display:grid; gap:9px; }
+  label { font-size:.9rem; font-weight:600; }
+  textarea { width:100%; resize:vertical; min-height:96px; padding:12px; font:inherit; line-height:1.5; border:1px solid #8e9c82; border-radius:0; background:#fffdf1; color:#192d2b; }
+  .ask-suggestions { display:flex; gap:8px; flex-wrap:wrap; }
+  button { font:inherit; border-radius:0; cursor:pointer; color:inherit; }
+  .ask-suggestions button { text-align:left; font-size:.82rem; padding:7px 10px; background:transparent; border:1px solid #a2ac8e; }
+  .ask-actions { display:flex; gap:14px; align-items:center; flex-wrap:wrap; margin-top:6px; }
+  .ask-submit { background:#365944; color:#fff9dd; border:2px solid #253e31; box-shadow:3px 3px 0 #b8ba98; padding:11px 17px; font-size:.92rem; font-weight:600; }
+  [data-ask-reset] { border:0; border-bottom:1px solid #8e9c82; background:transparent; padding:6px 0; font-size:.82rem; }
+  button:disabled { opacity:.6; cursor:wait; }
+  button:hover:not(:disabled) { filter:brightness(.93); }
+  textarea:focus-visible,button:focus-visible,summary:focus-visible { outline:3px solid #64795b; outline-offset:4px; }
+  .ask-status { min-height:1.5em; font-size:.86rem; line-height:1.5; margin:3px 0 0; color:#526b48; }
+  .ask-status[data-error="true"] { color:#8a342b; }
+  .ask-demo-controls { border-top:1px solid #b5bda0; padding-top:12px; margin-top:12px; font-size:.8rem; }
+  .ask-demo-controls summary { cursor:pointer; color:#566647; }
+  .ask-demo-controls p { margin:10px 0; line-height:1.5; }
+  [data-ask-failure] { padding:6px 10px; border:1px solid #a2ac8e; background:transparent; }
+  [data-ask-failure][aria-pressed="true"] { background:#e5cdb3; border-color:#957054; }
+  .ask-conversation :global(.ask-message) { margin:0; padding:12px 14px; border-left:3px solid #90a47b; background:#e8e9d1; }
+  .ask-conversation :global(.ask-message[data-role="user"]) { margin-left:24px; border-left-color:#bbaa79; background:#eee7d0; }
+  .ask-conversation :global(.ask-message strong) { display:block; margin-bottom:6px; font-size:.77rem; letter-spacing:.04em; }
+  .ask-conversation :global(.ask-message p) { margin:0; font-size:.94rem; line-height:1.65; white-space:pre-line; }
+  .ask-conversation :global(.ask-citations) { display:flex; flex-wrap:wrap; gap:8px 14px; margin-top:10px; }
+  .ask-conversation :global(.ask-citations a) { font-size:.8rem; text-decoration:underline; text-underline-offset:3px; color:#365944; }
+</style>

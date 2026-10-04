@@ -1,10 +1,10 @@
+---
+const active = Astro.url.pathname.startsWith('/profile');
+---
 <header class="site-header">
-  <a class="brand" href="/">Trevor Santiago</a>
+  <a class="brand" href="/"><span class="crest" aria-hidden="true">T</span><span>Trevor Santiago</span></a>
   <nav aria-label="Primary navigation">
-    <a href="/#work">Work</a>
-    <a href="/#about">About</a>
-    <a href="https://github.com/tjsanti" target="_blank" rel="noreferrer">GitHub</a>
-    <a href="https://www.linkedin.com/in/trevor-santiago/" target="_blank" rel="noreferrer">LinkedIn</a>
-    <a href="/resume.pdf">Resume</a>
+    <a href="/profile/" aria-current={active ? 'page' : undefined}>Profile</a>
+    <a class="hall-link" href="/explore/">Enter Garden hall <span aria-hidden="true">↗</span></a>
   </nav>
 </header>

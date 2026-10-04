@@ -1,0 +1,30 @@
+---
+const enabled = import.meta.env.DEV || import.meta.env.PROTOTYPE_REVIEW === '1';
+---
+{enabled && <aside class="review" aria-label="Visual prototype review controls">
+  <div class="review-heading"><span class="review-dot"></span> STATIC DESIGN STUDY <span class="review-hint">← → to compare</span></div>
+  <div class="review-controls">
+    <div class="review-directions" role="group" aria-label="Art direction">
+      <button data-direction="blue"><span>A</span> Blue standard</button>
+      <button data-direction="oak"><span>B</span> Oak & ember</button>
+      <button data-direction="moss"><span>C</span> Garden hall</button>
+    </div>
+    <div class="review-screens" role="group" aria-label="Preview screen">
+      <button data-view="landing">Landing</button><button data-view="game">Game</button><button data-view="evidence">Evidence panel</button>
+    </div>
+  </div>
+</aside>}
+<style is:global>
+  .review { position:fixed;z-index:100;bottom:14px;left:50%;transform:translateX(-50%);width:max-content;max-width:calc(100% - 24px);padding:10px 12px 12px;border:1px solid #59646d;background:#121b23;box-shadow:0 6px 0 #060d13,0 12px 30px #0007;color:#e4ebec;font-family:Arial,sans-serif; }
+  .review-heading {display:flex;align-items:center;gap:6px;font-size:9px;letter-spacing:.12em;color:#a2b3c0;margin-bottom:9px;}
+  .review-dot {width:5px;height:5px;background:#adc6df;}
+  .review-hint {margin-left:auto;letter-spacing:0;color:#8899a7;}
+  .review-controls,.review-directions,.review-screens {display:flex;gap:4px;}
+  .review-screens {border-left:1px solid #3e4d5a;padding-left:10px;margin-left:8px;}
+  .review button {white-space:nowrap;cursor:pointer;border:1px solid transparent;background:transparent;color:#b2c1cf;padding:8px 10px;font:12px Arial,sans-serif;}
+  .review button span {color:#8598aa;margin-right:5px;font-size:10px;}
+  .review button[aria-pressed="true"] {background:#dce7ee;color:#14222d;border-color:#fff;}
+  .review button[aria-pressed="true"] span {color:#415970;}
+  .review button:hover {border-color:#aec0d0;}
+  @media(max-width:720px) {.review{width:calc(100% - 20px);bottom:10px}.review-controls{flex-direction:column}.review-directions,.review-screens{justify-content:space-between}.review-screens{margin:0;border:0;padding:5px 0 0;border-top:1px solid #3e4d5a}.review button{padding:7px 6px;font-size:11px;flex:1}.review-hint{display:none}}
+</style>
