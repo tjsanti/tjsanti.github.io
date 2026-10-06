@@ -1,0 +1,11 @@
+---
+import { portfolio } from '../data/portfolio';
+---
+<div class="profile-facts" id="work-preferences">
+  <p>{portfolio.location} · {portfolio.languages.join(', ')}</p>
+  <p>{portfolio.workAuthorization}</p>
+  {portfolio.preferences.map(preference => <p>{preference}</p>)}
+</div>
+<style>
+  .profile-facts{border-top:1px solid #c2cdb5;margin-top:24px;padding-top:20px;scroll-margin-top:30px}.profile-facts p{font-size:14px;line-height:1.7;color:#687b60;margin:0 0 12px}
+</style>

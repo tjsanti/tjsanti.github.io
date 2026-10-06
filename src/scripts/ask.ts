@@ -5,30 +5,34 @@ export interface DemoAnswer { text: string; citations: DemoCitation[] }
 export interface DemoMessage { role: 'user' | 'assistant'; text: string; citations?: DemoCitation[] }
 
 const citation = (label: string, anchor: string): DemoCitation => ({ label, href: `/profile/#${anchor}` });
-const samplePrefix = 'Demo answer using fictional sample content. ';
+const demoPrefix = 'Local demo using reviewed Portfolio content. ';
+export const demoWelcome = 'Ask about a project, experience, skills, or education. Responses use the reviewed Portfolio content.';
 
 /** Shared by every Ask panel. It only selects canned copy from the local corpus. */
 export function getDemoAnswer(question: string, conversation: DemoMessage[] = []): DemoAnswer {
   const query = question.trim().toLowerCase();
   if (!query) return { text: 'Enter a question to try the local demo.', citations: [] };
-  let project = portfolio.projects.find(item => query.includes(item.title.toLowerCase()) || query.includes(item.id));
+  if (/job description|\bfit\b|qualified|requirements|assess.*alignment/.test(query)) return {
+    text: 'This local demo cannot assess job fit. It provides canned replies from reviewed Portfolio content rather than interpreting a job description. You can inspect the skills and experience directly.',
+    citations: [citation('Skills', 'skills'), citation('Experience', 'experience')],
+  };
+  let project = portfolio.projects.find(item => [item.title, item.id, ...(item.aliases ?? [])].some(name => new RegExp(`\\b${name.toLowerCase().replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`).test(query)));
   if (!project && /^(tell me more|more|why|how|what about it|what did it use)\b/.test(query)) {
     const projectIds = new Set(portfolio.projects.map(item => item.id));
     const last = [...conversation].reverse().find(message => message.role === 'assistant' && message.citations?.some(item => projectIds.has(item.href.split('#')[1])));
     const previousProject = last?.citations?.find(item => projectIds.has(item.href.split('#')[1]))?.href.split('#')[1];
     project = portfolio.projects.find(item => item.id === previousProject);
   }
-  if (project) return { text: `${samplePrefix}${project.summary}\n\n${project.detail[0]}\n\nExample topics: ${project.tags.join(', ')}.`, citations: [citation(project.title, project.id)] };
-  if (/job description|\bfit\b|qualified|requirements|preferences|alignment/.test(query)) return {
-    text: 'This local demo cannot assess job fit or preferences. All current records are fictional, and no work preferences have been supplied. The finished flow will compare a job description with reviewed evidence and state any gaps. For now, you can inspect the sample skills and experience below.',
-    citations: [citation('Sample skills', 'skills'), citation('Sample experience', 'experience')],
-  };
-  if (/skills?|technolog|languages?|python|typescript|technical/.test(query)) return { text: `${samplePrefix}The sample Profile lists ${portfolio.skills.join(', ')}. These labels are placeholders, not verified claims about Trevor.`, citations: [citation('Sample skills', 'skills')] };
-  if (/experience|career|history|worked|roles?|background/.test(query)) return { text: `${samplePrefix}${portfolio.experience.map(role => `${role.title} at ${role.organization}. ${role.summary}`).join('\n\n')}`, citations: [citation('Sample experience', 'experience')] };
-  if (/education|degree|university|school/.test(query)) return { text: `${samplePrefix}${portfolio.education.map(record => `${record.title}, ${record.institution}. ${record.summary}`).join('\n\n')}`, citations: [citation('Sample education', 'education')] };
-  if (/projects?|\bbuilt\b|archive|portfolio/.test(query)) return { text: `${samplePrefix}The three featured studies are ${portfolio.projects.filter(project => project.featured).map(project => project.title).join(', ')}. Paper trail is an example archive entry. Ask about a project by name to try its evidence links.`, citations: portfolio.projects.map(project => citation(project.title, project.id)) };
-  if (/trevor|about this|this preview|hello|^hi\b/.test(query)) return { text: `${samplePrefix}${portfolio.about[0]}\n\n${portfolio.about[2]}`, citations: [citation('About this preview', 'about')] };
-  return { text: 'This canned demo only recognizes a few topics: the sample projects, experience, skills, education, and this preview. It has no evidence for that question. Try a suggestion or ask about Field notes.', citations: [] };
+  if (project) return { text: `${demoPrefix}${project.summary}\n\n${project.detail.join('\n\n')}\n\nTechnologies: ${project.tags.join(', ')}.`, citations: [citation(project.title, project.id)] };
+  if (/preferences|remote|relocat|location|work authorization|sponsorship|citizen/.test(query)) return { text: `${demoPrefix}${portfolio.location}. ${portfolio.workAuthorization}\n\n${portfolio.preferences.join('\n\n')}`, citations: [citation('Location and work preferences', 'work-preferences')] };
+  if (/certificat|credentials|courses|recognition|awards?/.test(query)) return { text: `${demoPrefix}${[...portfolio.certifications, ...portfolio.recognition].map(record => `${record.title}, ${record.organization}, ${record.period}.`).join('\n')}`, citations: [citation('Certifications', 'certifications'), citation('Recognition', 'recognition')] };
+  if (/languages?/.test(query)) return { text: `${demoPrefix}Programming tools include ${portfolio.skills.join(', ')}.\n\nProfessional working language: ${portfolio.languages.join(', ')}.`, citations: [citation('Skills', 'skills'), citation('Profile details', 'work-preferences')] };
+  if (/skills?|technolog|python|typescript|technical|fine.tun|qlora/.test(query)) return { text: `${demoPrefix}Trevor uses ${portfolio.skills.join(', ')}.`, citations: [citation('Skills', 'skills')] };
+  if (/experience|career|history|worked|roles?|background|alldata|mets/.test(query)) return { text: `${demoPrefix}${portfolio.experience.map(role => `${role.title} at ${role.organization}, ${role.period}. ${role.summary}\n${role.bullets.join('\n')}`).join('\n\n')}`, citations: [citation('Experience', 'experience')] };
+  if (/education|degree|university|school/.test(query)) return { text: `${demoPrefix}${portfolio.education.map(record => `${record.title}, ${record.institution}, ${record.period}. ${record.summary}`).join('\n\n')}`, citations: [citation('Education', 'education')] };
+  if (/projects?|\bbuilt\b|archive|portfolio/.test(query)) return { text: `${demoPrefix}Featured projects: ${portfolio.projects.filter(project => project.featured).map(project => project.title).join(', ')}.\n\nProject archive: ${portfolio.projects.filter(project => !project.featured).map(project => project.title).join(', ')}. Ask about a project by name to read its evidence.`, citations: portfolio.projects.map(project => citation(project.title, project.id)) };
+  if (/trevor|about this|this preview|hello|^hi\b/.test(query)) return { text: `${demoPrefix}${portfolio.about.join('\n\n')}`, citations: [citation('About Trevor', 'about')] };
+  return { text: 'This canned demo recognizes projects, experience, skills, education, certifications, and work preferences. It has no evidence for that question. Try a suggestion or ask about NormFlow.', citations: [] };
 }
 
 function setupAskPanel(panel: HTMLElement) {
@@ -89,7 +93,7 @@ function setupAskPanel(panel: HTMLElement) {
     log.replaceChildren();
     const welcome = document.createElement('p');
     welcome.className = 'ask-welcome';
-    welcome.textContent = 'Try a sample question to see how answers and evidence links will appear. The content is fictional.';
+    welcome.textContent = demoWelcome;
     log.append(welcome);
     input.value = '';
     failNext = false;

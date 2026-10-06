@@ -3,7 +3,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import AskPanel from '../components/AskPanel.astro';
-import { portfolio } from '../data/portfolio';
+import Credentials from '../components/Credentials.astro';
+import ProfileFacts from '../components/ProfileFacts.astro';
+import { portfolio, previewNotice } from '../data/portfolio';
 
 const featured = portfolio.projects.filter(project => project.featured);
 const archive = portfolio.projects.filter(project => !project.featured);
@@ -26,7 +28,7 @@ const archive = portfolio.projects.filter(project => !project.featured);
       </a>
     </section>
 
-    <p class="preview-notice"><span class="notice-dot" aria-hidden="true"></span> Local preview. The content below is made up so you can test the layout and flow.</p>
+    <p class="preview-notice"><span class="notice-dot" aria-hidden="true"></span>{previewNotice}</p>
 
     <div class="profile-body">
       <aside class="profile-directory">
@@ -41,6 +43,7 @@ const archive = portfolio.projects.filter(project => !project.featured);
         <section id="about" class="reading-section" aria-labelledby="about-title">
           <p class="pixel-label">ABOUT</p><h2 id="about-title">A bit of context.</h2>
           <div class="prose">{portfolio.about.map(paragraph => <p>{paragraph}</p>)}</div>
+          <ProfileFacts />
         </section>
 
         <section id="experience" class="reading-section" aria-labelledby="experience-title">
@@ -55,13 +58,14 @@ const archive = portfolio.projects.filter(project => !project.featured);
           <div class="section-heading"><div><p class="pixel-label">FEATURED PROJECTS</p><h2 id="projects-title">Things built, taken apart,<br />and built again.</h2></div></div>
           <div class="project-list">{featured.map(project => <article id={project.id} class="project-card">
             <div class="project-heading"><h3><a href={`/projects/${project.id}/`}>{project.title}</a></h3><span aria-hidden="true">↗</span></div>
+            <p class="record-organization">{project.organization}</p>
             <p>{project.summary}</p><ul class="tags" aria-label="Project technologies">{project.tags.map(tag => <li>{tag}</li>)}</ul><a class="detail-link" href={`/projects/${project.id}/`}>Read project details <span aria-hidden="true">→</span></a>
           </article>)}</div>
         </section>
 
         <section id="archive" class="reading-section" aria-labelledby="archive-title">
           <p class="pixel-label">PROJECT ARCHIVE</p><h2 id="archive-title">More from the workbench.</h2>
-          <div class="archive-list">{archive.map(project => <article id={project.id}><div><h3><a href={`/projects/${project.id}/`}>{project.title}</a></h3><p>{project.summary}</p></div><a href={`/projects/${project.id}/`} aria-label={`Read ${project.title}`}><span aria-hidden="true">↗</span></a></article>)}</div>
+          <div class="archive-list">{archive.map(project => <article id={project.id}><div><h3><a href={`/projects/${project.id}/`}>{project.title}</a></h3><p class="record-organization">{project.organization}</p><p>{project.summary}</p></div><a href={`/projects/${project.id}/`} aria-label={`Read ${project.title}`}><span aria-hidden="true">↗</span></a></article>)}</div>
           {archive.length === 0 && <p>More project notes will appear here.</p>}
         </section>
 
@@ -69,16 +73,17 @@ const archive = portfolio.projects.filter(project => !project.featured);
           <p class="pixel-label">SKILLS & EDUCATION</p><h2 id="skills-title">Tools and foundations.</h2>
           <ul class="skills-list">{portfolio.skills.map(skill => <li>{skill}</li>)}</ul>
           <div id="education" class="education-list">{portfolio.education.map(record => <article id={record.id}><p class="record-period">{record.period}</p><h3>{record.title}</h3><p class="record-organization">{record.institution}</p><p>{record.summary}</p></article>)}</div>
+          <Credentials />
         </section>
 
         <section id="ask" class="reading-section ask-section" aria-labelledby="ask-title">
-          <p class="pixel-label">GROUNDED Q&A</p><h2 id="ask-title">Ask about the work.</h2><p class="ask-intro">Try a question, follow the evidence links, or paste a job description to test the flow.</p><AskPanel id="profile-ask" />
+          <p class="pixel-label">Q&A PREVIEW</p><h2 id="ask-title">Ask about the work.</h2><p class="ask-intro">Try a question about a project, experience, or skills and follow the evidence links.</p><AskPanel id="profile-ask" />
         </section>
 
         <section id="contact" class="reading-section" aria-labelledby="contact-title">
           <p class="pixel-label">LINKS & CONTACT</p><h2 id="contact-title">The usual places.</h2>
-          <p>These are preview links. Contact details and a finished resume will be added with the real content.</p>
-          <div id="preview-links" class="contact-links"><a href={portfolio.links.github}>GitHub <span aria-hidden="true">↗</span></a><a href={portfolio.links.linkedin}>LinkedIn <span aria-hidden="true">↗</span></a><a href={portfolio.links.contact}>Contact <span aria-hidden="true">↗</span></a><a href={portfolio.links.resume}>Resume <span aria-hidden="true">↓</span></a></div>
+          <p><a href={portfolio.links.contact}>{portfolio.links.contact.replace('mailto:', '')}</a></p>
+          <div class="contact-links"><a href={portfolio.links.github}>GitHub <span aria-hidden="true">↗</span></a><a href={portfolio.links.linkedin}>LinkedIn <span aria-hidden="true">↗</span></a><a href={portfolio.links.resume ?? portfolio.links.contact}>{portfolio.links.resume ? 'Resume' : 'Request resume'} <span aria-hidden="true">↗</span></a></div>
         </section>
       </div>
     </div>

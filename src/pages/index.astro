@@ -3,19 +3,19 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import GardenGame from '../components/GardenGame.astro';
 import { portfolio } from '../data/portfolio';
 ---
-<BaseLayout page="landing" title={`${portfolio.name} · Garden hall`}>
+<BaseLayout page="landing" title={`${portfolio.name} · Garden hall`} description={portfolio.tagline}>
   <main id="main-content" class="landing">
     <img class="hall-art" src="/art/garden-hall.png" alt="A 16-bit stone hall with ivy, sunlit windows, books, and a green carpet." width="1536" height="1024" fetchpriority="high" />
     <div class="shade" aria-hidden="true"></div>
-    <nav class="landing-nav" aria-label="Primary navigation"><a class="brand" href="/"><span class="crest" aria-hidden="true">T</span><span>Trevor Santiago</span></a><div><a href="/profile/">View Profile</a><a href="/profile/#preview-links">Resume ↗</a></div></nav>
+    <nav class="landing-nav" aria-label="Primary navigation"><a class="brand" href="/"><span class="crest" aria-hidden="true">T</span><span>Trevor Santiago</span></a><div><a href="/profile/">View Profile</a><a href={portfolio.links.resume ?? portfolio.links.contact}>{portfolio.links.resume ? 'Resume' : 'Request resume'} ↗</a></div></nav>
     <div class="landing-copy">
-      <p class="role">AI ENGINEER · SYSTEMS BUILDER</p>
+      <p class="role">{portfolio.title.toUpperCase()}</p>
       <h1>{portfolio.name}</h1>
-      <p class="intro">AI systems, data pipelines,<br />and the work behind them.</p>
+      <p class="intro">{portfolio.tagline}</p>
       <div class="landing-actions"><a class="pixel-button" href="/explore/" data-enter>Enter Garden hall <span aria-hidden="true">↓</span></a><a class="pixel-button secondary" href="/profile/">Read the Profile <span aria-hidden="true">↗</span></a></div>
       <p class="scroll-note">↓ Scroll or press S to enter</p>
     </div>
-    <footer class="landing-footer"><span>LOCAL PREVIEW · SAMPLE CONTENT</span><a href="/profile/">All the work, also in the Profile ↗</a></footer>
+    <footer class="landing-footer"><span>PORTFOLIO PREVIEW</span><a href="/profile/">All the work, also in the Profile ↗</a></footer>
     <span class="entry-status" role="status"></span>
   </main>
   <GardenGame hidden id="game-content" />

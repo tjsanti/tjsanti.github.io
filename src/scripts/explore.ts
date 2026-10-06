@@ -59,6 +59,13 @@ export async function initGame(options: { arrival?: boolean; paused?: boolean } 
   overlay.addEventListener('click', event => { if (event.target === overlay) closePanel(); });
   window.addEventListener('keydown', event => {
     if (!current) return;
+    if ((event.key === 'ArrowUp' || event.key === 'ArrowDown') && !event.defaultPrevented && !event.ctrlKey && !event.metaKey && !event.altKey && !event.shiftKey) {
+      // Preserve caret movement and selection in the Q&A form.
+      if (event.target instanceof Element && event.target.closest('input, textarea, select, [contenteditable], [role="textbox"]')) return;
+      event.preventDefault();
+      reader.scrollBy(0, event.key === 'ArrowDown' ? 48 : -48);
+      return;
+    }
     if (event.key === 'Escape') { event.preventDefault(); closePanel(); }
     if (event.key === 'Tab') {
       const controls = Array.from(dialog.querySelectorAll<HTMLElement>('a, button, input, textarea, select, [tabindex="0"]')).filter(element => element.getClientRects().length && !element.hasAttribute('disabled'));
@@ -110,4 +117,3 @@ export async function initGame(options: { arrival?: boolean; paused?: boolean } 
       host.dataset.ready = 'failed'; console.error('Garden hall failed to load', error);
     }
 }
-

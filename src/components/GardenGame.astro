@@ -13,7 +13,7 @@ const { hidden = false, id = 'main-content' } = Astro.props;
       <div class="touch-controls" aria-label="Touch movement controls"><div class="dpad"><button data-direction="0,-1" class="up" aria-label="Move up">↑</button><button data-direction="-1,0" class="left" aria-label="Move left">←</button><button data-direction="1,0" class="right" aria-label="Move right">→</button><button data-direction="0,1" class="down" aria-label="Move down">↓</button></div><button data-touch-interact disabled aria-label="Inspect nearby exhibit">E</button></div>
     </div>
     <div class="game-toolbar"><p class="keyboard-help"><kbd>W A S D</kbd> / <kbd>↑ ← ↓ →</kbd> Walk <span>·</span> <kbd>E</kbd> Inspect</p><button class="nearby-button" data-interact disabled><span class="keycap">E</span><span data-nearby-label>Walk to an exhibit</span></button><details class="exhibit-directory"><summary>Exhibits <span aria-hidden="true">↑</span></summary><nav aria-label="Exhibit directory">{exhibits.map(exhibit => <button data-open-exhibit={exhibit.id}>{exhibit.label}<span aria-hidden="true">↗</span></button>)}</nav></details></div>
-    <p class="game-caption">Local preview · fictional content <span>Click a marker to walk to it.</span></p>
+    <p class="game-caption">Preview · Explore the work <span>Click a marker to walk to it.</span></p>
     <noscript><p class="no-script">The Game needs JavaScript. <a href="/profile/">Read the complete Profile instead.</a></p></noscript>
   </main>
   <div class="evidence-backdrop" hidden>
