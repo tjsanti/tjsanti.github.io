@@ -1,5 +1,5 @@
 /** Approved Portfolio content, reviewed by Trevor through October 5, 2026. */
-export const previewNotice = 'Preview site. Q&A uses local canned responses; no AI service is connected.';
+export const previewNotice = 'Explore the work in the Profile or Game. AI Q&A is under construction.';
 
 export interface Credential { id: string; title: string; organization: string; period: string }
 

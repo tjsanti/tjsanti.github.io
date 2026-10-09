@@ -9,7 +9,7 @@ const { exhibit } = Astro.props;
 const project = exhibit.projectId ? portfolio.projects.find(record => record.id === exhibit.projectId) : undefined;
 const archive = portfolio.projects.filter(record => !record.featured);
 const title = exhibit.kind === 'about' ? portfolio.name : project?.title ?? exhibit.label;
-const labels = { about: 'ABOUT', experience: 'EXPERIENCE', project: 'PROJECT EVIDENCE', archive: 'PROJECT ARCHIVE', skills: 'SKILLS & EDUCATION', ask: 'Q&A PREVIEW' };
+const labels = { about: 'ABOUT', experience: 'EXPERIENCE', project: 'PROJECT EVIDENCE', archive: 'PROJECT ARCHIVE', skills: 'SKILLS & EDUCATION', ask: 'AI Q&A' };
 ---
 
 <article class="evidence-content">
@@ -26,7 +26,7 @@ const labels = { about: 'ABOUT', experience: 'EXPERIENCE', project: 'PROJECT EVI
 
   {exhibit.kind === 'skills' && <><p class="evidence-lede">Tools, techniques, and a few foundations.</p><h3>Skills</h3><ul class="evidence-skills">{portfolio.skills.map(skill => <li>{skill}</li>)}</ul><h3>Education</h3>{portfolio.education.map(record => <section class="evidence-record"><p class="evidence-period">{record.period}</p><h3>{record.title}</h3><p class="evidence-institution">{record.institution}</p><p>{record.summary}</p></section>)}<Credentials /><div class="evidence-links"><a href="/profile/#skills">Read skills and education in the Profile <span aria-hidden="true">↗</span></a></div></>}
 
-  {exhibit.kind === 'ask' && <><p class="evidence-lede">Try a question about a project, experience, or skills.</p><AskPanel id="game-ask" /><div class="evidence-links"><a href="/profile/#ask">Open Q&A in the Profile <span aria-hidden="true">↗</span></a></div></>}
+  {exhibit.kind === 'ask' && <AskPanel id="game-ask" />}
 </article>
 
 <style>
