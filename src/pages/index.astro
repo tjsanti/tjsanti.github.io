@@ -1,129 +1,28 @@
 ---
-import BaseLayout from "../layouts/BaseLayout.astro";
-import Footer from "../components/Footer.astro";
-import Header from "../components/Header.astro";
-import TraceRail from "../components/TraceRail.astro";
-import WorkCard from "../components/WorkCard.astro";
-
-type WorkFrontmatter = {
-  title: string;
-  summary: string;
-  year?: number;
-  role?: string;
-  tags?: string[];
-  links?: {
-    github?: string;
-    demo?: string;
-    source?: string;
-  };
-};
-
-const modules = import.meta.glob<{ frontmatter: WorkFrontmatter }>("../content/work/*.md", {
-  eager: true,
-});
-
-const work = Object.entries(modules)
-  .map(([path, module]) => ({
-    slug: path.split("/").pop()?.replace(/\.md$/, "") ?? "",
-    data: {
-      tags: [],
-      links: {},
-      ...module.frontmatter,
-    },
-  }))
-  .sort((a, b) => (b.data.year ?? 0) - (a.data.year ?? 0));
+import BaseLayout from '../layouts/BaseLayout.astro';
+import GardenGame from '../components/GardenGame.astro';
+import { portfolio } from '../data/portfolio';
 ---
-
-<BaseLayout>
-  <Header />
-
-  <main>
-    <section class="hero section">
-      <div class="hero-copy">
-        <p class="eyebrow">AI engineering portfolio</p>
-        <h1>Trevor Santiago</h1>
-        <p class="lede">AI engineer building full-stack, agentic, and LLM-powered systems.</p>
-        <p>
-          I am moving from data science into AI engineering, with experience building data
-          pipelines, ML/NLP workflows, and practical systems around messy real-world data.
-        </p>
-        <div class="link-row" aria-label="Profile links">
-          <a href="https://github.com/tjsanti" target="_blank" rel="noreferrer">GitHub</a>
-          <a href="https://www.linkedin.com/in/trevor-santiago/" target="_blank" rel="noreferrer">LinkedIn</a>
-          <a href="/resume.pdf">Resume</a>
-        </div>
-      </div>
-      <TraceRail />
-    </section>
-
-    <section class="section" id="work">
-      <div class="section-heading">
-        <p class="eyebrow">Work</p>
-        <h2>Technical writeups and builds</h2>
-      </div>
-      {work.length > 0 ? (
-        <div class="work-list">
-          {work.map((item) => (
-            <WorkCard
-              href={`/work/${item.slug}/`}
-              title={item.data.title}
-              summary={item.data.summary}
-              year={item.data.year}
-              role={item.data.role}
-              tags={item.data.tags}
-              links={item.data.links}
-            />
-          ))}
-        </div>
-      ) : (
-        <div class="empty-work">
-          <p>
-            This section is ready for project writeups. The first entries will focus on
-            AI-assisted content workflows and LLM-enriched data pipelines.
-          </p>
-          <p class="empty-note">Add a Markdown file in <code>src/content/work</code> to publish one.</p>
-        </div>
-      )}
-    </section>
-
-    <section class="section" id="build">
-      <div class="section-heading">
-        <p class="eyebrow">How I build</p>
-        <h2>Practical systems around ambiguous workflows</h2>
-      </div>
-      <div class="capability-grid">
-        <article>
-          <h3>Structure messy workflows</h3>
-          <p>Turn ambiguous processes into clear states, inputs, interfaces, and review points.</p>
-        </article>
-        <article>
-          <h3>Use models as components</h3>
-          <p>Build around LLMs and tools where they improve text-heavy or judgment-heavy work.</p>
-        </article>
-        <article>
-          <h3>Keep validation close</h3>
-          <p>Design workflows with checks, evals, review, and failure handling near the output.</p>
-        </article>
-        <article>
-          <h3>Ship practical interfaces</h3>
-          <p>Care about the product layer: what the user sees, controls, trusts, and repeats.</p>
-        </article>
-      </div>
-    </section>
-
-    <section class="about section" id="about">
-      <div>
-        <p class="eyebrow">About</p>
-        <h2>From data science to AI engineering</h2>
-      </div>
-      <p>
-        My background is in applied data science: ML/NLP workflows, data pipelines,
-        model-driven analysis, and systems built around imperfect real-world data.
-        I am now focused on the engineering layer around AI: useful interfaces,
-        reliable workflows, tool use, validation, and deployment.
-      </p>
-    </section>
+<BaseLayout page="landing" title={`${portfolio.name} · Garden hall`} description={portfolio.tagline}>
+  <main id="main-content" class="landing">
+    <img class="hall-art" src="/art/garden-hall.png" alt="A 16-bit stone hall with ivy, sunlit windows, books, and a green carpet." width="1536" height="1024" fetchpriority="high" />
+    <div class="shade" aria-hidden="true"></div>
+    <nav class="landing-nav" aria-label="Primary navigation"><a class="brand" href="/"><span class="crest" aria-hidden="true">T</span><span>Trevor Santiago</span></a><div><a href="/profile/">View Profile</a><a href={portfolio.links.resume ?? portfolio.links.contact}>{portfolio.links.resume ? 'Resume' : 'Request resume'} ↗</a></div></nav>
+    <div class="landing-copy">
+      <p class="role">{portfolio.title.toUpperCase()}</p>
+      <h1>{portfolio.name}</h1>
+      <p class="intro">{portfolio.tagline}</p>
+      <div class="landing-actions"><a class="pixel-button" href="/explore/" data-enter>Enter Garden hall <span aria-hidden="true">↓</span></a><a class="pixel-button secondary" href="/profile/">Read the Profile <span aria-hidden="true">↗</span></a></div>
+      <p class="scroll-note">↓ Scroll or press S to enter</p>
+    </div>
+    <footer class="landing-footer"><span>PORTFOLIO</span><a href="/profile/">All the work, also in the Profile ↗</a></footer>
+    <span class="entry-status" role="status"></span>
   </main>
-
-  <Footer />
+  <GardenGame hidden id="game-content" />
 </BaseLayout>
+<script>import '../scripts/landing';</script>
+<style>
+  .landing.entering{position:fixed;inset:0;z-index:30;pointer-events:none;min-height:0;transition:opacity .24s;background:transparent}.landing.entering .shade{opacity:0;transition:opacity .7s}.landing.entering .landing-copy{opacity:0;transform:translateY(25px)}.landing.entering .landing-nav,.landing.entering .landing-footer{opacity:0;transition:opacity .3s}.landing.handoff{opacity:0}
+  .landing{position:relative;min-height:640px;height:100svh;overflow:hidden;background:#19392d;color:#e5ecd3}.hall-art{position:absolute;inset:0;width:100%;height:100%;max-width:none;object-fit:cover;object-position:center 45%;image-rendering:pixelated;transition:transform .8s ease}.shade{position:absolute;inset:0;background:linear-gradient(180deg,#11251b55 0%,#18312605 23%,#19372b4a 45%,#142d24ef 89%);transition:opacity .6s}.landing-nav{position:relative;z-index:2;display:flex;justify-content:space-between;align-items:center;padding:27px 42px;font-size:13px}.landing-nav>div{display:flex;gap:30px}.landing-nav a{text-decoration:none}.landing-nav .crest{background:#264b3a;border-color:#a4b598;box-shadow:3px 3px #193128}.landing-copy{position:absolute;left:5%;right:5%;bottom:95px;text-align:center;transition:opacity .4s,transform .6s}.role{font:8px/1.9 var(--display);letter-spacing:.11em;color:#c4d3ad;margin:0 0 27px}h1{font:clamp(25px,4vw,58px)/1.5 var(--display);letter-spacing:-.05em;text-shadow:4px 4px #213b2c;margin:0 0 15px}.intro{font-size:20px;line-height:1.65;color:#d5dfc6;margin:0 0 28px}.landing-actions{display:flex;justify-content:center;gap:19px}.scroll-note{font:7px/2 var(--display);color:#b6c7a6;margin:26px 0 0}.landing-footer{position:absolute;bottom:23px;left:42px;right:42px;display:flex;justify-content:space-between;gap:20px;font-size:11px;color:#b4c3a4}.landing-footer>span{font:6px/1.9 var(--display)}.landing-footer a{text-decoration:none}.entry-status{position:absolute;width:1px;height:1px;overflow:hidden}
+  @media(max-width:650px){.landing{min-height:600px}.landing-nav{padding:20px}.landing-nav>div{gap:20px;font-size:12px}.landing-copy{bottom:92px;left:20px;right:20px}h1{max-width:370px;margin:0 auto 18px;font-size:27px;line-height:1.6}.role{font-size:6px;margin-bottom:20px}.intro{font-size:17px}.landing-actions{flex-direction:column;align-items:center;gap:15px}.landing-actions a{width:270px}.scroll-note{font-size:6px;margin-top:22px}.landing-footer{left:20px;right:20px;bottom:18px;align-items:flex-end}.landing-footer a{max-width:135px;text-align:right}.hall-art{object-position:50% 35%}}
+</style>

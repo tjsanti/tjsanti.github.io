@@ -1,0 +1,3 @@
+# Use one Portfolio corpus
+
+The Profile, Game, and Grounded Q&A will draw from one curated, public Portfolio corpus rather than maintain separate descriptions of Trevor's work. Each experience may present a different amount or style of information, but professional claims, preferences, fun facts, and their supporting relationships will be authored once in human-editable records. Private or unreviewed notes may live in a gitignored local staging area, but the site and Grounded Q&A will never consume them directly. This trades some up-front content modeling and a promotion step for consistent human-readable and AI-generated answers without accidentally treating unpublished notes as approved claims.

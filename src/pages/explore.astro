@@ -1,0 +1,9 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import GardenGame from '../components/GardenGame.astro';
+---
+<BaseLayout page="game" title="Trevor Santiago · Garden hall"><GardenGame /></BaseLayout>
+<script>
+  import { initGame } from '../scripts/explore';
+  void initGame();
+</script>

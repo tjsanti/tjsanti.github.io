@@ -1,0 +1,196 @@
+---
+import PixelPrototypeSwitcher from '../../components/PixelPrototypeSwitcher.astro';
+// THROWAWAY: three 16-bit visual studies, each with Landing, Game, and Evidence panel.
+// Compare via ?variant=blue|oak|moss&screen=landing|game|evidence. No gameplay or persistence.
+const directions = [
+  {key:'blue',name:'Blue standard',description:'Limestone, blue banners, and a formal central aisle.',title:'A hall of things\nI have built.',note:'A classic RPG title screen, opening into a sunlit stone hall.',
+    points:[[50,25],[83,26],[17,30],[17,49],[17,71],[84,50],[84,69],[86,85]]},
+  {key:'oak',name:'Oak & ember',description:'Timber, warm stone, and an inhabited workshop.',title:'Come in.\nLook around.',note:'A compact title menu with the warmth of a working hall.',
+    points:[[50,23],[20,26],[76,46],[16,47],[17,71],[33,20],[91,46],[84,70]]},
+  {key:'moss',name:'Garden hall',description:'Sage stone, open windows, and greenery.',title:'A little world.\nA body of work.',note:'An open, quiet composition with almost no game chrome.',
+    points:[[50,23],[73,30],[24,30],[16,74],[86,80],[11,47],[92,39],[87,57]]},
+];
+const exhibits = ['About Trevor','Experience','Featured project','Featured project','Featured project','Project archive','Skills & education','Ask about Trevor'];
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex,nofollow" />
+    <title>Trevor Santiago · Pixel art visual studies</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  </head>
+  <body data-variant="blue" data-screen="landing">
+    <main>
+      {directions.map((direction,index) => <section class={`direction ${direction.key}`} data-scene={direction.key} hidden={index !== 0} aria-label={direction.name}>
+        <div class="landing" data-page="landing">
+          <img class="landing-art" src={`/prototype/pixel-halls/${direction.key}.png`} alt={`16-bit pixel art of a ${direction.description.toLowerCase()}`} loading={index === 0 ? 'eager' : 'lazy'} />
+          <div class="landing-shade"></div>
+          <header class="landing-nav">
+            <a class="identity" href="/" aria-label="Trevor Santiago's existing profile"><span class="crest" aria-hidden="true">T</span><span>Trevor Santiago</span></a>
+            <nav aria-label="Portfolio"><a href="/">View profile <span aria-hidden="true">↗</span></a><a class="resume" href="/resume.pdf">Resume</a></nav>
+          </header>
+          <div class="landing-copy">
+            <div class="title-ornament" aria-hidden="true"><span></span><i>◆</i><span></span></div>
+            <p class="role">APPLIED AI ENGINEER</p>
+            <h1>Trevor<br/> Santiago</h1>
+            <p class="intro">AI systems, data pipelines,<br class="oak-break"/> and the work behind them.</p>
+            <div class="landing-actions">
+              <button class="pixel-button primary" data-open-game><span aria-hidden="true">▶</span> Enter the Game</button>
+              <a class="pixel-button secondary" href="/">View profile <span aria-hidden="true">↗</span></a>
+            </div>
+            <p class="entry-note"><span aria-hidden="true">↓</span> Scroll or press S to enter</p>
+          </div>
+          <footer class="landing-foot"><span>Explore at your own pace.</span><span>All the work is also in the Profile.</span></footer>
+        </div>
+        <div class="game" data-page="game" hidden>
+          <header class="game-nav">
+            <button class="identity home-control" data-open-landing><span class="crest" aria-hidden="true">T</span><span>Trevor Santiago</span></button>
+            <div class="place"><span class="tiny-square"></span> THE GREAT HALL</div>
+            <nav aria-label="Game navigation"><button data-open-landing>Home</button><a href="/">View profile ↗</a></nav>
+          </header>
+          <div class="world-area">
+            <div class="world-frame">
+              <img src={`/prototype/pixel-halls/${direction.key}.png`} alt={`Static 16-bit great hall in the ${direction.name} art direction, with a small player character and exhibits around the room.`} />
+              <div class="exhibits">
+                {direction.points.map(([x,y],i) => <button class={`exhibit exhibit-${i}`} style={`--x:${x}%;--y:${y}%`} data-exhibit={exhibits[i]} aria-label={`Preview ${exhibits[i]}`}><span class="exhibit-diamond" aria-hidden="true">{i===7?'?':'◆'}</span><span class="exhibit-label">{exhibits[i]}</span></button>)}
+              </div>
+              {direction.key === 'oak' && <aside class="welcome-note"><span class="note-icon" aria-hidden="true">◆</span><div><strong>Make yourself at home.</strong><p>Choose an exhibit to see its evidence.</p></div></aside>}
+            </div>
+          </div>
+          <footer class="game-foot"><span><kbd>WASD</kbd> / <kbd>↑ ↓ ← →</kbd> Move</span><span><kbd>E</kbd> Inspect</span><span class="no-sequence">Explore in any order.</span></footer>
+        </div>
+      </section>)}
+      <div class="evidence-backdrop" hidden>
+        <section class="evidence-scroll" role="dialog" aria-modal="true" aria-labelledby="evidence-title" tabindex="-1">
+          <div class="scroll-rod top"></div>
+          <div class="evidence-body">
+            <header class="evidence-header"><span class="evidence-kicker">PORTFOLIO / <span data-panel-kind>ABOUT</span></span><button class="close-panel" aria-label="Close Evidence panel">×</button></header>
+            <div class="about-content">
+              <p class="panel-pixel">Hello, I'm</p><h2 id="evidence-title">Trevor Santiago</h2>
+              <p class="evidence-lede">AI engineer building full-stack, agentic, and LLM-powered systems.</p>
+              <hr/>
+              <h3>From data science to AI engineering</h3>
+              <p>My background is in applied data science: ML/NLP workflows, data pipelines, model-driven analysis, and systems built around imperfect real-world data.</p>
+              <p>I am now focused on the engineering layer around AI: useful interfaces, reliable workflows, tool use, validation, and deployment.</p>
+              <div class="panel-links"><a href="/">Read the complete Profile ↗</a><a href="/resume.pdf">Resume ↓</a></div>
+            </div>
+            <div class="sample-content" hidden><p class="panel-pixel">Evidence panel study</p><h2 data-sample-title></h2><p class="evidence-lede">This space will hold the approved portfolio evidence for this exhibit.</p><hr/><p>This prototype is for reviewing typography, spacing, and the panel's relationship to the Game. Project details and AI responses are not part of this visual study.</p><div class="sample-rule"></div><div class="sample-rule short"></div><a class="text-link" href="/">View the current Profile ↗</a></div>
+            <footer class="panel-foot"><span>Game paused while reading</span><span><kbd>ESC</kbd> Close</span></footer>
+          </div>
+          <div class="scroll-rod bottom"></div>
+        </section>
+      </div>
+      <PixelPrototypeSwitcher />
+    </main>
+    <script>
+      const keys = ['blue','oak','moss'];
+      let selectedExhibit = 'About Trevor';
+      let previousFocus: HTMLElement | null = null;
+      const params = () => new URLSearchParams(location.search);
+      function state() {
+        const p=params(); const aliases: Record<string,string>={a:'blue',b:'oak',c:'moss'};
+        const raw=p.get('variant') || 'blue';
+        return {variant:keys.includes(raw)?raw:(aliases[raw]||'blue'),screen:['game','evidence'].includes(p.get('screen')||'')?p.get('screen')!:'landing'};
+      }
+      function render() {
+        const {variant,screen}=state(); document.body.dataset.variant=variant;document.body.dataset.screen=screen;
+        document.querySelectorAll<HTMLElement>('[data-scene]').forEach(el=>el.hidden=el.dataset.scene!==variant);
+        document.querySelectorAll<HTMLElement>('[data-page]').forEach(el=>el.hidden=el.dataset.page!==(screen==='landing'?'landing':'game'));
+        document.querySelectorAll<HTMLElement>('[data-direction]').forEach(el=>el.setAttribute('aria-pressed',String(el.dataset.direction===variant)));
+        document.querySelectorAll<HTMLElement>('[data-view]').forEach(el=>el.setAttribute('aria-pressed',String(el.dataset.view===screen)));
+        document.querySelector<HTMLElement>('.evidence-backdrop')!.hidden=screen!=='evidence';
+        document.querySelectorAll<HTMLElement>('[data-scene]').forEach(el=>el.inert=screen==='evidence');
+        const about=selectedExhibit==='About Trevor';
+        document.querySelector<HTMLElement>('.about-content')!.hidden=!about;
+        document.querySelector<HTMLElement>('.sample-content')!.hidden=about;
+        document.querySelector<HTMLElement>('[data-sample-title]')!.textContent=selectedExhibit;
+        document.querySelector<HTMLElement>('[data-panel-kind]')!.textContent=about?'ABOUT':'EXHIBIT';
+        const dialog=document.querySelector<HTMLElement>('.evidence-scroll')!;
+        dialog.setAttribute('aria-label',selectedExhibit);
+        if(screen==='evidence'){dialog.removeAttribute('aria-labelledby');dialog.focus();}
+      }
+      function update(changes:Record<string,string>){const p=params();Object.entries(changes).forEach(([k,v])=>p.set(k,v));history.replaceState({},'',`${location.pathname}?${p}`);render();}
+      const close=()=>{update({screen:'game'});previousFocus?.focus();};
+      document.querySelectorAll<HTMLElement>('[data-direction]').forEach(el=>el.addEventListener('click',()=>update({variant:el.dataset.direction!})));
+      document.querySelectorAll<HTMLElement>('[data-view]').forEach(el=>el.addEventListener('click',()=>{selectedExhibit='About Trevor';previousFocus=el;update({screen:el.dataset.view!});}));
+      document.querySelectorAll('[data-open-game]').forEach(el=>el.addEventListener('click',()=>update({screen:'game'})));
+      document.querySelectorAll('[data-open-landing]').forEach(el=>el.addEventListener('click',()=>update({screen:'landing'})));
+      document.querySelectorAll<HTMLElement>('[data-exhibit]').forEach(el=>el.addEventListener('click',()=>{previousFocus=el;selectedExhibit=el.dataset.exhibit!;update({screen:'evidence'});}));
+      document.querySelector('.close-panel')!.addEventListener('click',close);
+      document.querySelector('.evidence-backdrop')!.addEventListener('click',e=>{if(e.target===e.currentTarget)close();});
+      window.addEventListener('popstate',render);
+      window.addEventListener('keydown',e=>{
+        if((e.target as HTMLElement).matches('input,textarea,[contenteditable="true"]'))return;
+        const s=state();
+        if(e.key==='Escape' && s.screen==='evidence'){close();return;}
+        if(e.key==='Tab' && s.screen==='evidence'){
+          const items=[...document.querySelectorAll<HTMLElement>('.evidence-scroll button,.evidence-scroll a')].filter(el=>el.getClientRects().length);
+          const first=items[0],last=items[items.length-1];
+          if(e.shiftKey&&(document.activeElement===first||document.activeElement===document.querySelector('.evidence-scroll'))){e.preventDefault();last.focus();}
+          else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}
+          return;
+        }
+        if(e.key==='ArrowLeft'||e.key==='ArrowRight'){e.preventDefault();update({variant:keys[(keys.indexOf(s.variant)+(e.key==='ArrowRight'?1:2))%3]});}
+        if(s.screen==='landing'&&(e.key.toLowerCase()==='s'||e.key==='ArrowDown')){e.preventDefault();update({screen:'game'});}
+      });
+      let wheelSum=0;
+      window.addEventListener('wheel',e=>{if(state().screen==='landing'){wheelSum+=Math.max(0,e.deltaY);if(wheelSum>90){wheelSum=0;update({screen:'game'});}}},{passive:true});
+      render();
+    </script>
+  </body>
+</html>
+
+<style is:global>
+  :root {color-scheme:dark;--display:'Press Start 2P',monospace;--body:'IBM Plex Sans',Arial,sans-serif;--ink:#111b26;--cream:#f3e6be;--gold:#cfab65;--edge:#547188;--panel:#182839;--accent:#83abd0;}
+  *{box-sizing:border-box}html,body{margin:0;min-height:100%;background:#0d151f;color:#f1ecd9;font-family:var(--body)}button,a{-webkit-tap-highlight-color:transparent}button{font:inherit;cursor:pointer}a{color:inherit;text-decoration:none}button:focus-visible,a:focus-visible{outline:3px solid #f2d28a;outline-offset:5px}button:disabled{cursor:default}button{color:inherit} [hidden]{display:none!important}h1,h2,h3,p{margin:0}button{border-radius:0}body{overflow:hidden}
+  body[data-variant="oak"]{--ink:#251d1d;--cream:#f1dfb1;--gold:#d4a75e;--edge:#9a7756;--panel:#382a26;--accent:#d5b180;background:#1c191a}
+  body[data-variant="moss"]{--ink:#192d2b;--cream:#eff0d1;--gold:#c7c995;--edge:#78998a;--panel:#1c3430;--accent:#a6c6a6;background:#122621}
+  .direction,.landing,.game{height:100svh;min-height:580px;position:relative;overflow:hidden}
+  .landing-art{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;image-rendering:pixelated;object-position:50% 45%}
+  .landing-shade{position:absolute;inset:0;background:#101c2de0;opacity:.73}
+  .landing-nav{position:absolute;z-index:2;top:30px;left:36px;right:36px;display:flex;justify-content:space-between;align-items:center}
+  .identity{display:flex;align-items:center;gap:14px;font-family:var(--display);font-size:9px;line-height:1.6}
+  .crest{display:grid;place-items:center;width:32px;height:37px;background:var(--panel);border:2px solid var(--gold);box-shadow:3px 3px 0 #090d15;clip-path:polygon(0 0,100% 0,100% 75%,50% 100%,0 75%);font:12px var(--display);color:var(--gold);padding-bottom:5px}
+  .landing-nav nav{display:flex;gap:26px;align-items:center;font-size:13px}.landing-nav nav a{padding:9px 0;border-bottom:1px solid #d8d6bf70}.landing-nav nav a:hover{color:var(--gold)}
+  .landing-copy{position:absolute;top:48%;left:50%;width:min(840px,90%);transform:translate(-50%,-50%);text-align:center}
+  .title-ornament{display:flex;align-items:center;justify-content:center;gap:14px;margin-bottom:29px;color:var(--gold)}.title-ornament span{height:2px;width:84px;background:var(--gold);box-shadow:0 3px #111b27}.title-ornament i{font-style:normal;font-size:14px}
+  .role{font:9px/1.8 var(--display);letter-spacing:.13em;color:var(--cream);margin-bottom:25px}
+  h1{font:clamp(27px,4.2vw,66px)/1.42 var(--display);letter-spacing:-.055em;color:var(--cream);text-shadow:0 4px #19324b,4px 0 #19324b,4px 5px #091321;}
+  .intro{margin:25px 0 29px;font-size:17px;line-height:1.55;color:#e4e7de;text-shadow:2px 2px #0c1723}.oak-break{display:none}
+  .landing-actions{display:flex;justify-content:center;gap:16px}.pixel-button{display:flex;align-items:center;justify-content:center;gap:17px;min-height:49px;padding:13px 20px;border:2px solid var(--edge);outline:2px solid #0c1520;box-shadow:inset 2px 2px #ffffff2b,inset -2px -2px #0004,4px 4px #0a1019;font:10px/1.6 var(--display);}
+  .pixel-button.primary{border-color:#d9c38b;background:var(--cream);color:var(--ink);}.pixel-button.secondary{background:var(--panel);color:var(--cream)}.pixel-button:hover{transform:translateY(-2px)}
+  .entry-note{margin-top:30px;font:8px/1.8 var(--display);color:#c2cfc8}.entry-note span{font-size:16px;margin-right:8px}.landing-foot{position:absolute;bottom:120px;left:35px;right:35px;display:flex;justify-content:space-between;font-size:11px;color:#d1d7cf;text-shadow:1px 1px #121d25}
+  /* A: a centered title screen over the same blue-carpet hall. */
+  .blue .landing-copy{top:46%}.blue .landing-shade{background:#0b182ad9;opacity:.72}
+  /* B: a left-aligned title menu in an asymmetric timber hall. */
+  .oak .landing-art{object-position:63% 50%}.oak .landing-shade{opacity:1;background:linear-gradient(90deg,#1c1718f0 0%,#1c1718db 33%,#201c1d55 66%,#201c1d22)}
+  .oak .landing-copy{left:7%;top:47%;width:52%;transform:translateY(-50%);text-align:left}.oak .title-ornament{justify-content:flex-start;margin-bottom:23px}.oak .title-ornament span:first-child{display:none}.oak .title-ornament span:last-child{width:92px}.oak h1{font-size:clamp(27px,3.6vw,55px);text-shadow:0 4px #654331,4px 4px #100f14}.oak .intro{font-size:17px;max-width:370px}.oak-break{display:block}.oak .landing-actions{flex-direction:column;align-items:flex-start;gap:14px}.oak .pixel-button{min-width:265px;justify-content:space-between}.oak .pixel-button.secondary{border-color:#9e805c;background:#312725d9}.oak .entry-note{margin-top:24px}.oak .landing-foot{color:#e3ceb0}
+  /* C: open sky and architectural rhythm above a quieter lower title. */
+  .moss .landing-shade{opacity:1;background:linear-gradient(180deg,#12272335 0%,#12272340 22%,#142d2cbd 53%,#10251eee 100%)}.moss .landing-art{object-position:center 20%}.moss .landing-copy{top:auto;bottom:150px;transform:translateX(-50%);width:86%}.moss .title-ornament{display:none}.moss h1{font-size:clamp(26px,4.1vw,60px);line-height:1.35;text-shadow:0 4px #2a554a,4px 4px #0b1d19}.moss h1 br{display:none}.moss .role{margin-bottom:24px}.moss .intro{margin:19px 0 24px}.moss .entry-note{margin-top:22px}.moss .landing-foot{bottom:115px}.moss .pixel-button.primary{background:#dde4ba;border-color:#f5f4cf}.moss .pixel-button.secondary{background:#16372fe6}
+  /* Game views preserve the image's full composition. No cropped exhibits. */
+  .game{display:flex;flex-direction:column;padding-bottom:108px;background:var(--ink)}
+  .game-nav{display:flex;flex-shrink:0;align-items:center;justify-content:space-between;gap:20px;min-height:64px;padding:10px 25px;border-bottom:2px solid var(--edge);background:var(--panel);box-shadow:0 3px #070f18;z-index:2}
+  .home-control{background:none;border:0;padding:0;text-align:left}.game-nav .crest{width:27px;height:31px;font-size:10px}.game-nav .identity{font-size:8px}.place{display:flex;gap:10px;align-items:center;font:8px/1.5 var(--display);color:var(--cream)}.tiny-square{width:5px;height:5px;background:var(--gold)}.game-nav nav{display:flex;gap:20px;align-items:center;font-size:12px}.game-nav nav button{background:none;border:0;padding:5px}.game-nav nav a{border:1px solid var(--edge);padding:7px 10px;box-shadow:2px 2px #080d14}
+  .world-area{flex:1;min-height:0;display:flex;justify-content:center;align-items:center;overflow:hidden;background:var(--ink);padding:12px 16px 0}
+  .world-frame{position:relative;height:100%;max-width:100%;aspect-ratio:3/2;flex-shrink:1;box-shadow:0 0 0 2px var(--edge),0 0 0 5px #080e16;background:var(--panel)}
+  .world-frame>img{display:block;width:100%;height:100%;object-fit:contain;image-rendering:pixelated}
+  .exhibits{position:absolute;inset:0}.exhibit{position:absolute;left:var(--x);top:var(--y);transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;border:0;background:none;padding:5px;color:#f2e7c4;z-index:1}
+  .exhibit-diamond{display:grid;place-items:center;width:23px;height:23px;border:2px solid var(--gold);background:var(--panel);box-shadow:2px 2px #09111b;font:10px var(--display)}
+  .exhibit-label{margin-top:6px;white-space:nowrap;font:7px/1.6 var(--display);background:#11202bed;padding:5px 7px;border:1px solid #d5c58b7a;box-shadow:2px 2px #0a151a;}
+  .exhibit:hover{z-index:5}.exhibit:hover .exhibit-diamond{color:var(--ink);background:var(--cream)}.exhibit:hover .exhibit-label{color:var(--ink);background:var(--cream)}.exhibit-3 .exhibit-label,.exhibit-4 .exhibit-label{opacity:0}.exhibit-3:hover .exhibit-label,.exhibit-4:hover .exhibit-label,.exhibit:focus-visible .exhibit-label{opacity:1}
+  .game-foot{display:flex;justify-content:center;align-items:center;gap:23px;flex-shrink:0;min-height:35px;padding:10px 20px 0;color:#b6c6cd;font-size:11px}kbd{font:10px var(--body);border:1px solid currentColor;padding:2px 5px;color:inherit}.no-sequence{color:#81939e;margin-left:10px}
+  .oak .game-nav{border-bottom:3px solid #70513b;box-shadow:0 2px #d0a97540}.oak .world-frame{box-shadow:0 0 0 3px #a48355,0 0 0 7px #3d3026,0 0 0 9px #b49766}.oak .world-area{padding:18px 20px 0}.oak .game-foot{color:#cfc1aa}.oak .exhibit-label{background:#332821ee;border-color:#c9a260}.welcome-note{position:absolute;bottom:5%;left:50%;transform:translateX(-50%);display:flex;gap:12px;align-items:center;max-width:80%;width:max-content;border:2px solid #cba76b;background:#352b25f2;padding:10px 14px;box-shadow:3px 3px #17181b;color:#ead8af}.note-icon{color:#d5ae69}.welcome-note strong{font:7px/1.7 var(--display)}.welcome-note p{font-size:11px;margin-top:3px;color:#d5c4ac}
+  .moss .game-nav{position:absolute;top:14px;left:20px;right:20px;min-height:50px;border:0;background:transparent;box-shadow:none;padding:0}.moss .game-nav .identity>span:last-child{display:none}.moss .game-nav nav,.moss .place{background:#18312ae8;border:1px solid #93ad91;padding:9px 12px;box-shadow:3px 3px #0a2019}.moss .game-nav nav a{padding:0;border:0;box-shadow:none}.moss .game-nav nav button{padding:0}.moss .world-area{padding:0}.moss .world-frame{box-shadow:none}.moss .game{padding-bottom:108px}.moss .game-foot{color:#bfd0bd}.moss .exhibit-label{opacity:0;background:#1c3930ed;border-color:#a7b697}.moss .exhibit:hover .exhibit-label,.moss .exhibit:focus-visible .exhibit-label{opacity:1}.moss .exhibit-diamond{width:19px;height:19px;font-size:8px;box-shadow:2px 2px #1c342c;background:#294638}
+  /* HTML Evidence panel: parchment color, pixel edges, normal reading text. */
+  .evidence-backdrop{position:fixed;inset:0;z-index:30;background:#081218a6;display:flex;justify-content:center;align-items:center;padding:40px 20px 125px}.evidence-scroll{position:relative;width:min(570px,100%);max-height:100%;color:#353428;outline:none;filter:drop-shadow(8px 12px 0 #0a111733)}
+  .evidence-body{max-height:calc(100svh - 195px);overflow:auto;background:#ece3c5;border-left:4px solid #b4a57a;border-right:4px solid #b4a57a;padding:25px 37px 18px;box-shadow:inset 4px 0 #d6ca9e,inset -4px 0 #d6ca9e}.scroll-rod{height:17px;position:relative;margin:0 -12px;background:#a28a5c;border:3px solid #d4bd85;box-shadow:inset 0 -4px #6e583b,0 3px #5b4935}.scroll-rod::before,.scroll-rod::after{content:'';position:absolute;top:-5px;bottom:-5px;width:10px;background:#937343;border:3px solid #d0b17b}.scroll-rod::before{left:-6px}.scroll-rod::after{right:-6px}.scroll-rod.bottom{box-shadow:inset 0 -4px #6e583b,0 4px #40382c}.evidence-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px}.evidence-kicker{font:7px/1.8 var(--display);color:#73694e}.close-panel{display:grid;place-items:center;width:29px;height:29px;background:#d7ca9f;border:1px solid #9c8c61;color:#564b33;box-shadow:2px 2px #b5a779;font-size:24px;line-height:1}.panel-pixel{font:8px/1.7 var(--display);color:#6d745a;margin-bottom:12px}.evidence-body h2{font:24px/1.4 var(--display);letter-spacing:-.05em;color:#2c4042}.evidence-lede{font-size:19px;line-height:1.4;margin:17px 0 22px;color:#485047}.evidence-body hr{border:0;border-top:1px solid #b9ad87;margin:24px 0}.evidence-body h3{font-size:16px;font-weight:600;margin-bottom:12px}.evidence-body p:not(.evidence-lede):not(.panel-pixel){font-size:14px;line-height:1.65;margin-bottom:15px}.panel-links{display:flex;gap:20px;flex-wrap:wrap;margin:23px 0}.panel-links a,.text-link{font-size:13px;text-decoration:underline;text-underline-offset:4px;color:#334d50}.panel-foot{border-top:1px solid #b9ad87;padding-top:15px;margin-top:26px;display:flex;justify-content:space-between;gap:12px;color:#787056;font-size:10px}.sample-rule{height:8px;background:#d8ccaa;margin:22px 0}.sample-rule.short{width:65%;margin-bottom:30px}
+  @media(min-aspect-ratio:19/10){.landing-copy{top:45%;}.landing-copy h1{font-size:40px}.title-ornament{margin-bottom:18px}.intro{margin:18px 0}.role{margin-bottom:15px}.entry-note{margin-top:19px}.moss .landing-copy{bottom:145px}.world-frame{width:auto;max-width:100%;}}
+  @media(max-width:900px){.landing-nav{left:24px;right:24px;top:24px}.identity>span:last-child{display:none}.oak .landing-copy{left:7%;width:75%}.moss h1 br{display:block}.moss .landing-copy{bottom:155px}.game-nav .place{display:none}.exhibit-label{font-size:6px}.world-frame{width:100%;height:auto;max-height:100%;aspect-ratio:3/2}.world-area{padding:12px 9px 0}.welcome-note{padding:7px 10px}.moss .game-nav{top:12px;left:12px;right:12px}.landing-foot{font-size:10px}.evidence-body h2{font-size:21px}}
+  @media(max-width:600px){.direction,.landing,.game{min-height:650px}.landing-art{object-fit:cover;object-position:50% 50%}.landing-nav{left:18px;right:18px;top:18px}.landing-nav nav{gap:17px;font-size:12px}.landing-copy,.blue .landing-copy{top:44%;width:92%}h1{font-size:29px}.role{font-size:7px;letter-spacing:.07em}.intro{font-size:15px}.landing-actions{flex-direction:column;align-items:center;gap:12px}.pixel-button{min-width:240px;font-size:9px;padding:11px 16px;min-height:45px}.entry-note{font-size:7px;margin-top:22px}.landing-foot{bottom:147px;justify-content:center}.landing-foot>span:first-child{display:none}.title-ornament{margin-bottom:24px}.oak .landing-copy{left:7%;top:45%;width:88%}.oak h1{font-size:28px}.oak .landing-shade{background:#21191cc2}.oak .landing-actions{align-items:flex-start}.oak .title-ornament{margin-bottom:20px}.moss .landing-copy{top:auto;bottom:170px;left:50%;width:92%;transform:translateX(-50%)}.moss h1{font-size:26px}.moss .landing-foot{bottom:144px}.moss .role{margin-bottom:16px}.moss .intro{margin:16px 0 20px}.game{padding-bottom:153px}.game-nav{padding:10px 12px;min-height:57px;gap:8px}.game-nav nav{gap:12px;font-size:11px}.game-foot{flex-wrap:wrap;font-size:9px;gap:12px;padding-top:16px}.no-sequence{display:none}.game-foot kbd{font-size:9px}.exhibit-label{display:none}.exhibit-diamond{width:19px;height:19px;font-size:8px}.exhibit{padding:3px}.world-area{align-items:center;padding:8px}.welcome-note{display:none}.moss .game{padding-bottom:153px;padding-top:70px}.moss .game-nav{top:16px}.evidence-backdrop{padding:25px 19px 158px}.evidence-body{padding:18px 22px 16px;max-height:calc(100svh - 220px)}.evidence-body h2{font-size:18px}.evidence-lede{font-size:17px}.evidence-body p:not(.evidence-lede):not(.panel-pixel){font-size:13px}.evidence-header{margin-bottom:20px}.panel-foot{font-size:9px}.panel-foot>span:first-child{max-width:150px}}
+  .oak .exhibit-6 .exhibit-label{opacity:0}.oak .exhibit-6:hover .exhibit-label,.oak .exhibit-6:focus-visible .exhibit-label{opacity:1}
+  @media(prefers-reduced-motion:no-preference){.pixel-button{transition:transform 100ms}.exhibit-label{transition:opacity 120ms}}
+</style>

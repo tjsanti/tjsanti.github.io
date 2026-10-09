@@ -1,0 +1,35 @@
+---
+import { portfolio, type Exhibit } from '../data/portfolio';
+import AskPanel from './AskPanel.astro';
+import Credentials from './Credentials.astro';
+import ProfileFacts from './ProfileFacts.astro';
+
+interface Props { exhibit: Exhibit }
+const { exhibit } = Astro.props;
+const project = exhibit.projectId ? portfolio.projects.find(record => record.id === exhibit.projectId) : undefined;
+const archive = portfolio.projects.filter(record => !record.featured);
+const title = exhibit.kind === 'about' ? portfolio.name : project?.title ?? exhibit.label;
+const labels = { about: 'ABOUT', experience: 'EXPERIENCE', project: 'PROJECT EVIDENCE', archive: 'PROJECT ARCHIVE', skills: 'SKILLS & EDUCATION', ask: 'AI Q&A' };
+---
+
+<article class="evidence-content">
+  <p class="evidence-kind">{labels[exhibit.kind]}</p><h2 id={`evidence-title-${exhibit.id}`}>{title}</h2>
+
+  {exhibit.kind === 'about' && <><p class="evidence-lede">{portfolio.title}</p>{portfolio.about.map(paragraph => <p>{paragraph}</p>)}<ProfileFacts /><div class="evidence-links"><a href="/profile/#about">Read the complete Profile <span aria-hidden="true">↗</span></a></div></>}
+
+  {exhibit.kind === 'experience' && <><p class="evidence-lede">A record of roles, responsibilities, and the work behind them.</p>{portfolio.experience.map(record => <section class="evidence-record"><p class="evidence-period">{record.period} · {record.organization}</p><h3>{record.title}</h3><p>{record.summary}</p><ul>{record.bullets.map(bullet => <li>{bullet}</li>)}</ul><a href={`/profile/#${record.id}`}>Read this experience in the Profile <span aria-hidden="true">↗</span></a></section>)}</>}
+
+  {exhibit.kind === 'project' && project && <><p class="evidence-period">{project.organization}</p><p class="evidence-lede">{project.summary}</p><ul class="evidence-tags" aria-label="Project technologies">{project.tags.map(tag => <li>{tag}</li>)}</ul><hr />{project.detail.map(paragraph => <p>{paragraph}</p>)}<div class="evidence-links">{project.repository && <a href={project.repository}>View on GitHub <span aria-hidden="true">↗</span></a>}<a href={`/projects/${project.id}/`}>Open the project page <span aria-hidden="true">↗</span></a><a href={`/profile/#${project.id}`}>Find it in the Profile</a></div></>}
+  {exhibit.kind === 'project' && !project && <><p class="evidence-lede">This exhibit is under construction.</p><p>Project notes will appear here when its record is ready. You can still read all the available projects in the Profile.</p><a href="/profile/#projects">Browse projects <span aria-hidden="true">↗</span></a></>}
+
+  {exhibit.kind === 'archive' && <><p class="evidence-lede">More projects from my work and independent builds.</p>{archive.map(record => <section class="evidence-record"><h3>{record.title}</h3><p class="evidence-period">{record.organization}</p><p>{record.summary}</p><ul class="evidence-tags" aria-label="Project technologies">{record.tags.map(tag => <li>{tag}</li>)}</ul><a href={`/projects/${record.id}/`}>Read project details <span aria-hidden="true">↗</span></a></section>)}{archive.length === 0 && <p>The archive is under construction. Featured project notes are already available in the Profile.</p>}<div class="evidence-links"><a href="/profile/#archive">View the project archive <span aria-hidden="true">↗</span></a></div></>}
+
+  {exhibit.kind === 'skills' && <><p class="evidence-lede">Tools, techniques, and a few foundations.</p><h3>Skills</h3><ul class="evidence-skills">{portfolio.skills.map(skill => <li>{skill}</li>)}</ul><h3>Education</h3>{portfolio.education.map(record => <section class="evidence-record"><p class="evidence-period">{record.period}</p><h3>{record.title}</h3><p class="evidence-institution">{record.institution}</p><p>{record.summary}</p></section>)}<Credentials /><div class="evidence-links"><a href="/profile/#skills">Read skills and education in the Profile <span aria-hidden="true">↗</span></a></div></>}
+
+  {exhibit.kind === 'ask' && <AskPanel id="game-ask" />}
+</article>
+
+<style>
+  .evidence-content{color:#334638;font-family:'IBM Plex Sans',sans-serif}.evidence-kind{font:7px/1.9 'Press Start 2P',monospace;color:#758064;margin:0 0 17px}.evidence-content h2{font-size:32px;font-weight:500;line-height:1.25;letter-spacing:-.025em;margin:0 0 14px}.evidence-content h3{font-size:19px;font-weight:500;margin:24px 0 12px;line-height:1.4}.evidence-content p,.evidence-content li{font-size:15px;line-height:1.75}.evidence-content p{margin:0 0 17px}.evidence-content .evidence-lede{font-size:19px;line-height:1.55;color:#5f6f55;margin-bottom:24px}.evidence-content ul{padding-left:21px;margin:15px 0 23px}.evidence-content li{margin-bottom:8px}.evidence-content a{font-size:13px;color:#395b46;text-underline-offset:4px;line-height:1.7}.evidence-content a:focus-visible{outline:3px solid #8b743f;outline-offset:4px}.evidence-content a:hover{color:#8b743f}.evidence-links{display:flex;flex-wrap:wrap;gap:14px 24px;padding-top:17px;margin-top:20px;border-top:1px solid #bbc39b}.evidence-links a span{margin-left:8px}.evidence-record{border-top:1px solid #c2c7a7;padding-top:22px;margin-top:22px}.evidence-record h3{margin-top:0}.evidence-content .evidence-period{font-size:12px;color:#7a8262;margin-bottom:8px}.evidence-content .evidence-institution{font-size:14px;color:#758064}.evidence-content .evidence-tags{list-style:none;display:flex;flex-wrap:wrap;gap:7px;padding:0;margin:17px 0 24px}.evidence-tags li{font-size:11px;line-height:1.5;padding:4px 8px;margin:0;border:1px solid #bfc5a0;background:#dfe3c8;color:#667455}.evidence-content hr{border:0;border-top:1px solid #bfc5a0;margin:25px 0}.evidence-content .evidence-skills{list-style:none;display:flex;flex-wrap:wrap;gap:8px;padding:0;margin-bottom:28px}.evidence-skills li{font-size:13px;margin:0;background:#dfe3c8;border-left:3px solid #82956c;padding:5px 10px}
+  @media(max-width:600px){.evidence-content h2{font-size:26px}.evidence-content .evidence-lede{font-size:17px}.evidence-content p,.evidence-content li{font-size:14px}.evidence-content .evidence-tags li{font-size:11px}.evidence-content .evidence-skills li{font-size:12px}.evidence-content h3{font-size:17px}}
+</style>

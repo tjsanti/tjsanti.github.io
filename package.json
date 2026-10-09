@@ -2,11 +2,16 @@
   "name": "tjsanti.github.io",
   "type": "module",
   "scripts": {
+    "test": "node --test tests/*.test.mjs src/game/*.test.ts",
+    "prototype": "PROTOTYPE_REVIEW=1 npm run build && python3 -m http.server 4321 --bind 127.0.0.1 -d dist",
     "dev": "ASTRO_TELEMETRY_DISABLED=1 astro dev",
     "build": "ASTRO_TELEMETRY_DISABLED=1 astro build",
     "preview": "ASTRO_TELEMETRY_DISABLED=1 astro preview"
   },
   "devDependencies": {
     "astro": "^7.0.3"
+  },
+  "dependencies": {
+    "phaser": "^3.90.0"
   }
 }
