@@ -47,6 +47,6 @@ Fonts and art are local assets, so runtime has no font-service dependency. GitHu
 
 ## Deployment and discovery
 
-Trevor already has a Vercel project connected to this GitHub repository through Vercel's dashboard. This does not require a repo-local Vercel configuration or `.vercel` directory. The repository also retains its GitHub Pages workflow; its presence does not describe the Vercel project's settings.
+Vercel deploys `main` to Production and other branches to Preview through its GitHub integration. GitHub Actions runs tests and a build for pull requests and pushes to `main`.
 
-The Portfolio intentionally keeps `noindex,nofollow` in Production and Preview. Trevor shares it through direct links, such as a resume or LinkedIn profile, and does not want search indexing. This is a discovery preference, not access protection; anyone with the URL can open and share it. Do not remove the tag as routine launch cleanup.
+The Portfolio uses `noindex,nofollow` in Production and Preview. It is publicly accessible through direct links and excluded from indexing by search engines that support these directives. The tag does not restrict access to the site.

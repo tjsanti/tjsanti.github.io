@@ -368,7 +368,7 @@ Generation and validation run automatically during CI and local production build
 
 ### Hosting and deployment
 
-- Use Trevor's existing Vercel project, already connected to this GitHub repository through Vercel's dashboard. Repo-local Vercel configuration is not required for that connection.
+- Use Vercel's GitHub integration for Preview and Production deployments of this repository.
 - Use Vercel Hobby unless its practical limits later require a plan change.
 - Use separate Preview and Production environments.
 - Configure the Groq API key only in environments where Q&A should run.
