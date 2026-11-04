@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { portfolio, exhibits, makeExhibits, validatePortfolio } from '../src/data/portfolio.ts';
-import { getDemoAnswer } from '../src/scripts/ask.ts';
+import { getDemoAnswer } from '../src/lib/qa-demo.ts';
 
 test('the local corpus generates eight exhibits and derives featured project references', () => {
   assert.doesNotThrow(() => validatePortfolio(portfolio, exhibits));

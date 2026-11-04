@@ -14,9 +14,9 @@ npm run dev
 Open the local URL printed by Astro, normally `http://localhost:4321`. If another preview is using that port, Astro chooses the next one. No `.env` file, Groq key, Vercel account, or external content is needed.
 
 ```sh
+npm run check
 npm test
 npm run build
-npm run preview
 ```
 
 ## Try the flow
@@ -29,7 +29,7 @@ npm run preview
 - `/projects/normflow/`: A project detail page. All six project records have one. NormFlow, AI-assisted PCD editing, and Repair Trends are featured in the hall; Known Fixes, Mets outfield-alignment modeling, and the retired Find a Fix pipeline appear in the archive.
 - Q&A shows an under-construction notice in both the Profile and Game, with links to projects and contact information.
 - To test the retained canned demo locally, run `QA_DEMO=1 npm run dev`. For a non-production preview build, use `QA_DEMO=1 npm run build`. Try suggestions, evidence links, a follow-up, reset, and the "Fail next reply" control. No AI provider receives anything. Leave `QA_DEMO` unset for public builds; Vercel Production ignores the demo opt-in.
-- Refresh starts a fresh visit and conversation. Nothing is stored in localStorage or sent to a backend.
+- Refresh starts a fresh visit and conversation. Nothing is stored in localStorage. The default site and canned demo do not send requests to a backend; explicitly enabled live Preview Q&A sends the bounded conversation to the server and Groq.
 
 ## Where to change things
 
@@ -40,12 +40,14 @@ npm run preview
 - `src/game/hall.ts`: Lazy-loaded Phaser engine, sprite, input, markers, and camera.
 - `src/game/hall-geometry.ts`: Walkable floor and furniture collision.
 - `src/pages/explore.astro` and `src/scripts/explore.ts`: Game controls and accessible HTML evidence panels.
-- `src/components/AskPanel.astro`: Shared public Q&A under-construction state. `src/components/AskDemo.astro` and `src/scripts/ask.ts` retain the opt-in canned preview.
+- `src/components/AskPanel.astro`: Shared Q&A availability gate. `src/components/AskConversation.astro` and `src/scripts/ask.ts` provide the live Preview and opt-in canned demo. `src/server/` owns grounding, citation validation, and the Groq call; `src/pages/api/ask.ts` is the server-only endpoint.
 - `/prototype/portfolio/`: Earlier visual studies retained for reference.
 
-Fonts and art are local assets, so runtime has no font-service dependency. GitHub, LinkedIn, and email links use reviewed contact details. Resume controls request a resume by email until a current public PDF is selected and `portfolio.links.resume` is set. The content-complete Portfolio may launch with Q&A under construction. Provider-backed Q&A and job-fit analysis remain deferred until a separate, access-protected Preview evaluation passes the Q&A release gate in `docs/specs/portfolio-rebuild.md`. The opt-in local demo uses canned responses and clearly identifies itself.
+Fonts and art are local assets, so runtime has no font-service dependency. GitHub, LinkedIn, and email links use reviewed contact details. Resume controls request a resume by email until a current public PDF is selected and `portfolio.links.resume` is set. The content-complete Portfolio may launch with Q&A under construction. Provider-backed Q&A and job-fit analysis are implemented for a separate, access-protected Preview. Follow [the Groq/Vercel Preview setup guide](docs/qa-preview.md) for branch-scoped credentials, ZDR, deployment, and evaluation. Live Q&A requires explicit opt-in and confirmed ZDR, and is hard-disabled in Production until a later change after the Q&A release gate in `docs/specs/portfolio-rebuild.md` passes. The opt-in local demo uses canned responses and clearly identifies itself.
 
 ## Deployment and discovery
+
+The Vercel adapter emits prerendered pages and one stateless `/api/ask` function. Use `npm run dev` locally; deployment behavior is tested on Vercel Preview rather than `astro preview`.
 
 Vercel deploys `main` to Production and other branches to Preview through its GitHub integration. GitHub Actions runs tests and a build for pull requests and pushes to `main`.
 

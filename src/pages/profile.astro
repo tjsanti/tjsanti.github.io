@@ -5,6 +5,7 @@ import Footer from '../components/Footer.astro';
 import AskPanel from '../components/AskPanel.astro';
 import Credentials from '../components/Credentials.astro';
 import ProfileFacts from '../components/ProfileFacts.astro';
+import { qaEnabledForBuild } from '../server/qa-config';
 import { portfolio, previewNotice } from '../data/portfolio';
 
 const featured = portfolio.projects.filter(project => project.featured);
@@ -28,7 +29,7 @@ const archive = portfolio.projects.filter(project => !project.featured);
       </a>
     </section>
 
-    <p class="preview-notice"><span class="notice-dot" aria-hidden="true"></span>{previewNotice}</p>
+    <p class="preview-notice"><span class="notice-dot" aria-hidden="true"></span>{qaEnabledForBuild ? 'Explore the work in the Profile or Game. Grounded Q&A is available in this testing Preview.' : previewNotice}</p>
 
     <div class="profile-body">
       <aside class="profile-directory">
