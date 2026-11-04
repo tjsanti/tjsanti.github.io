@@ -41,6 +41,30 @@ for (const scenario of cases) {
   const config = JSON.parse(readFileSync('.vercel/output/config.json', 'utf8'));
   assert.ok(config.routes.some(route => route.dest === '_render' && new RegExp(route.src).test('/api/ask')), 'API must route to a Vercel function');
   assert.ok(readdirSync('.vercel/output/functions').includes('_render.func'));
+  // Exercise Astro routing and runtime env handling in the actual function bundle.
+  execFileSync(process.execPath, ['--input-type=module', '-e', `
+    import assert from 'node:assert/strict';
+    import app from './.vercel/output/functions/_render.func/.vercel/output/server/entry.mjs';
+    let calls = 0;
+    globalThis.fetch = async () => {
+      calls++;
+      return Response.json({ choices: [{ finish_reason: 'stop', message: { content: JSON.stringify({
+        status: 'answered', text: 'NormFlow uses FAISS.', evidenceIds: ['normflow']
+      }) } }] });
+    };
+    const response = await app.fetch(new Request('https://preview.example/api/ask', {
+      method: 'POST', headers: { 'Content-Type': 'application/json', Origin: 'https://preview.example' },
+      body: JSON.stringify({ messages: [{ role: 'user', text: 'What is NormFlow?' }] })
+    }));
+    assert.equal(response.status, ${scenario.live ? 200 : 503});
+    assert.equal(calls, ${scenario.live ? 1 : 0});
+    const body = await response.json();
+    assert.equal(body.status, '${scenario.live ? 'answered' : 'unavailable'}');
+    if (calls) assert.equal(body.citations[0].href, '/profile/#normflow');
+  `], {
+    env: { ...process.env, GROQ_API_KEY: sentinel, ...scenario.env },
+    stdio: 'pipe',
+  });
   verifyNoStaticKey('.vercel/output/static');
-  console.log(`Verified ${scenario.name}: Profile, Game, function routing, and no static API key.`);
+  console.log(`Verified ${scenario.name}: Profile, Game, function execution, and no static API key.`);
 }

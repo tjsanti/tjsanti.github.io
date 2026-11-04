@@ -1,8 +1,9 @@
 import { portfolio } from '../data/portfolio.ts';
+import type { Citation, QAMessage } from './qa.ts';
 
-export interface DemoCitation { label: string; href: string }
+export type DemoCitation = Citation;
 export interface DemoAnswer { text: string; citations: DemoCitation[] }
-export interface DemoMessage { role: 'user' | 'assistant'; text: string; citations?: DemoCitation[] }
+export interface DemoMessage extends QAMessage { citations?: Citation[] }
 
 const citation = (label: string, anchor: string): DemoCitation => ({ label, href: `/profile/#${anchor}` });
 const demoPrefix = 'Local demo using reviewed Portfolio content. ';
