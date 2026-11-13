@@ -32,7 +32,7 @@ export function getDemoAnswer(question: string, conversation: DemoMessage[] = []
   if (/education|degree|university|school/.test(query)) return { text: `${demoPrefix}${portfolio.education.map(record => `${record.title}, ${record.institution}, ${record.period}. ${record.summary}`).join('\n\n')}`, citations: [citation('Education', 'education')] };
   if (/projects?|\bbuilt\b|archive|portfolio/.test(query)) return { text: `${demoPrefix}Featured projects: ${portfolio.projects.filter(project => project.featured).map(project => project.title).join(', ')}.\n\nProject archive: ${portfolio.projects.filter(project => !project.featured).map(project => project.title).join(', ')}. Ask about a project by name to read its evidence.`, citations: portfolio.projects.map(project => citation(project.title, project.id)) };
   if (/trevor|about this|this preview|hello|^hi\b/.test(query)) return { text: `${demoPrefix}${portfolio.about.join('\n\n')}`, citations: [citation('About Trevor', 'about')] };
-  return { text: 'This canned demo recognizes projects, experience, skills, education, certifications, and work preferences. It has no evidence for that question. Try a suggestion or ask about NormFlow.', citations: [] };
+  return { text: 'This canned demo recognizes projects, experience, skills, education, certifications, and work preferences. It has no evidence for that question. Try a suggestion or ask about Repair Trends.', citations: [] };
 }
 
 function setupAskPanel(panel: HTMLElement) {

@@ -17,7 +17,7 @@ test('duplicate corpus IDs and missing required content fail validation', () => 
   assert.throws(() => validatePortfolio(duplicate), /Duplicate Portfolio record identifier/);
   const missing = structuredClone(portfolio);
   missing.projects[0].summary = '  ';
-  assert.throws(() => validatePortfolio(missing), /normflow.summary/);
+  assert.throws(() => validatePortfolio(missing), /probable-cause-editing.summary/);
   const credential = structuredClone(portfolio);
   delete credential.certifications[0].period;
   assert.throws(() => validatePortfolio(credential), /hf-llms.period/);
@@ -43,11 +43,11 @@ test('a featured selection must contain exactly three projects', () => {
 });
 
 test('project demo answers cite reviewed evidence without fictional claims', () => {
-  const answer = getDemoAnswer('Tell me about NormFlow');
+  const answer = getDemoAnswer('Tell me about PCD');
   assert.match(answer.text, /reviewed Portfolio content/);
-  assert.match(answer.text, /FAISS/);
+  assert.match(answer.text, /Semantic retrieval/);
   assert.doesNotMatch(answer.text, /fictional|sample content/);
-  assert.deepEqual(answer.citations, [{ label: 'NormFlow', href: '/profile/#normflow' }]);
+  assert.deepEqual(answer.citations, [{ label: 'AI-assisted PCD editing', href: '/profile/#probable-cause-editing' }]);
 });
 
 test('a follow-up uses only the in-memory project conversation', () => {
@@ -64,7 +64,7 @@ test('unrelated questions have no invented facts or evidence', () => {
 });
 
 test('job fit preview refuses an assessment even when the description names a project', () => {
-  const answer = getDemoAnswer('Assess fit for this job description: Python engineer, NormFlow');
+  const answer = getDemoAnswer('Assess fit for this job description: Python engineer, Repair Trends');
   assert.match(answer.text, /cannot assess job fit/);
   assert.doesNotMatch(answer.text, /fictional/);
   assert.equal(answer.citations.length, 2);

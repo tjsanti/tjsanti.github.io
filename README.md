@@ -26,7 +26,7 @@ npm run preview
 - `/explore/`: Walk with WASD or arrows. Press E by an exhibit, or click its marker to walk there. Touch controls appear on narrow screens and touch devices.
 - Evidence opens in a scroll panel and pauses movement. Escape, Return to the hall, or browser Back closes it. The Exhibits directory opens the same panels without walking.
 - `/profile/`: Read the complete professional evidence, including the project archive, skills, education, certifications, recognition, and Q&A status.
-- `/projects/normflow/`: A project detail page. All six project records have one. NormFlow, AI-assisted PCD editing, and Repair Trends are featured in the hall; Known Fixes, Mets outfield-alignment modeling, and the retired Find a Fix pipeline appear in the archive.
+- `/projects/probable-cause-editing/`: A project detail page. All five project records have one. AI-assisted PCD editing, Repair Trends, and Known Fixes are featured in the hall; Mets outfield-alignment modeling and the retired Find a Fix pipeline appear in the archive.
 - Q&A shows an under-construction notice in both the Profile and Game, with links to projects and contact information.
 - To test the retained canned demo locally, run `QA_DEMO=1 npm run dev`. For a non-production preview build, use `QA_DEMO=1 npm run build`. Try suggestions, evidence links, a follow-up, reset, and the "Fail next reply" control. No AI provider receives anything. Leave `QA_DEMO` unset for public builds; Vercel Production ignores the demo opt-in.
 - Refresh starts a fresh visit and conversation. Nothing is stored in localStorage or sent to a backend.
