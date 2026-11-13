@@ -9,6 +9,8 @@ Branch: `feat/groq-qa-preview`. Use the existing Portfolio Vercel project, with 
 3. Confirm `openai/gpt-oss-120b` is eligible for **Free AI Gateway Credit** in the current [model catalog](https://vercel.com/ai-gateway/models/gpt-oss-120b) and your account. This is the default model and supports the structured outputs this endpoint requests. Eligibility can change. If necessary, choose another free-credit-eligible model with structured outputs and low reasoning-effort support, set `AI_GATEWAY_MODEL`, redeploy, and evaluate it before use.
 4. For free-tier testing, do not purchase Gateway credits or enable automatic top-ups. Use the Gateway usage/credits view to monitor the allowance and set a conservative key budget if your account offers it. Quota exhaustion and rate limits produce an unavailable state on the site.
 
+Vercel requires a valid payment method on the **same team that owns the Gateway key** to unlock free credits. In AI Gateway, follow the **add credit card / verify identity** prompt and confirm the free credit balance becomes available. An API key alone does not complete account verification. If this step is missing, inference requests return HTTP 403 with `customer_verification_required`, which the Portfolio displays as temporarily unavailable. Adding a payment method is separate from purchasing credits or upgrading the plan. See the [Gateway FAQ](https://vercel.com/docs/ai-gateway/faq).
+
 No Groq account, upstream provider key, ZDR setting, or `GROQ_ZDR_ENABLED` confirmation is needed. Do not enable paid-only Gateway ZDR controls. The application sends no ZDR option. Model providers may retain content under their own policies. This site does not log or persist questions, job descriptions, model reasoning, or answers. The public Portfolio corpus is the only evidence sent alongside the bounded browser conversation.
 
 ## 2. Protect the Preview
@@ -82,6 +84,7 @@ All non-API routes remain prerendered. `.vercel/output` is the deployment artifa
 
 ## Troubleshooting
 
+- **HTTP 403 `customer_verification_required` from Gateway:** add a valid payment method to the Vercel team that owns the key, then wait for verification/free-credit activation and retry the same Preview. This is an account-level prerequisite; changing code or redeploying does not satisfy it. Keep paid top-ups disabled if you intend to use only the free allowance.
 - **Under construction:** confirm `QA_ENABLED` is `1`, scoped to this exact branch, and redeploy. Production always shows this state.
 - **Unavailable on every submission:** verify this is an AI Gateway key from the intended Vercel team, free credits are available, the selected model is free-tier eligible, and it supports structured outputs plus low reasoning effort. Gateway errors such as invalid keys, exhausted credits, or per-model rate limits return the same unavailable state; raw errors are not exposed. In browser Network, 503 is the application's generic provider/unavailable response; 401/403 or an HTML response can come from deployment protection or the firewall.
 - **Unexpected sign-in/HTML response:** open the Preview URL directly and authenticate, then retry from the same hostname.
