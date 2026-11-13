@@ -1,7 +1,7 @@
 import { isQAEnabled, MAX_ANSWER_CHARS, MAX_CONVERSATION_CHARS, MAX_MESSAGES, MAX_QUESTION_CHARS, type QAEnvironment, type QAMessage } from '../lib/qa.ts';
-import { askGroq } from './groq.ts';
+import { askGateway } from './gateway.ts';
 
-export interface AskEnvironment extends QAEnvironment { GROQ_API_KEY?: string; GROQ_MODEL?: string }
+export interface AskEnvironment extends QAEnvironment { AI_GATEWAY_API_KEY?: string; AI_GATEWAY_MODEL?: string }
 const MAX_REQUEST_BYTES = 65536;
 const unavailable = { status: 'unavailable', message: 'Grounded Q&A is temporarily unavailable. Please browse the Profile evidence or try again later.' };
 const reply = (body: unknown, status = 200, headers = {}) => Response.json(body, { status, headers: { 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff', ...headers } });
@@ -50,13 +50,13 @@ async function readMessages(request: Request): Promise<QAMessage[]> {
 
 export async function handleAsk(request: Request, env: AskEnvironment, fetcher: typeof fetch = fetch): Promise<Response> {
   if (request.method !== 'POST') return reply({ status: 'invalid_request', message: 'Use POST.' }, 405, { Allow: 'POST' });
-  if (!isQAEnabled(env) || !env.GROQ_API_KEY?.trim()) return reply(unavailable, 503);
+  if (!isQAEnabled(env) || !env.AI_GATEWAY_API_KEY?.trim()) return reply(unavailable, 503);
   const origin = request.headers.get('origin');
   if ((origin && origin !== new URL(request.url).origin) || request.headers.get('sec-fetch-site') === 'cross-site') return reply({ status: 'invalid_request', message: 'Use the Q&A on this site.' }, 403);
   if (request.headers.get('content-type')?.split(';')[0]?.trim().toLowerCase() !== 'application/json') return reply({ status: 'invalid_request', message: 'Send application/json.' }, 415);
   try {
     const messages = await readMessages(request);
-    const answer = await askGroq(messages, { apiKey: env.GROQ_API_KEY, model: env.GROQ_MODEL?.trim() || 'openai/gpt-oss-120b' }, fetcher);
+    const answer = await askGateway(messages, { apiKey: env.AI_GATEWAY_API_KEY, model: env.AI_GATEWAY_MODEL?.trim() || 'openai/gpt-oss-120b' }, fetcher);
     return reply(answer);
   } catch (error) {
     if (error instanceof InvalidRequest) return reply({ status: 'invalid_request', message: error.message }, error.status);

@@ -5,7 +5,7 @@ const { id = 'ask-preview', live = false } = Astro.props;
 ---
 <section class="ask-panel" data-ask-panel data-mode={live ? 'live' : 'demo'} aria-labelledby={`${id}-title`}>
   <div class="ask-heading"><h3 id={`${id}-title`}>Ask about Trevor</h3><span class="demo-label">{live ? 'AI Q&A · PREVIEW' : 'LOCAL DEMO'}</span></div>
-  {live ? <p class="ask-notice" id={`${id}-privacy`}>AI-powered. Your question and recent conversation are sent to Groq to generate an answer. This site does not store question or answer content. Groq Zero Data Retention is enabled. Do not submit confidential, sensitive, or personal information. AI answers can be wrong; check the linked evidence.</p> : <p class="ask-notice" id={`${id}-privacy`}>Local demo, canned responses. No AI service connected. Nothing sent off this device.</p>}
+  {live ? <p class="ask-notice" id={`${id}-privacy`}>AI-powered. Your question and recent conversation are sent through Vercel AI Gateway to model providers to generate an answer. This site does not store question or answer content. Model providers may retain content under their policies. Do not submit confidential, sensitive, or personal information. AI answers can be wrong; check the linked evidence.</p> : <p class="ask-notice" id={`${id}-privacy`}>Local demo, canned responses. No AI service connected. Nothing sent off this device.</p>}
   <div class="ask-conversation" data-ask-conversation role="log" aria-label={live ? 'Grounded Q&A conversation' : 'Demo conversation'} aria-live="polite" aria-relevant="additions">
     <p class="ask-welcome">{QA_WELCOME}</p>
   </div>

@@ -10,13 +10,12 @@ export interface Citation { label: string; href: string }
 export interface QAAnswer { status: 'answered' | 'unsupported'; text: string; citations: Citation[] }
 export interface QAEnvironment {
   QA_ENABLED?: string;
-  GROQ_ZDR_ENABLED?: string;
   VERCEL_ENV?: string;
 }
 
 /** Both the prerendered input and runtime endpoint must opt in; Production never opts in. */
 export function isQAEnabled(env: QAEnvironment): boolean {
-  return env.VERCEL_ENV !== 'production' && env.QA_ENABLED === '1' && env.GROQ_ZDR_ENABLED === '1';
+  return env.VERCEL_ENV !== 'production' && env.QA_ENABLED === '1';
 }
 
 /** Retain complete recent turns, leaving room for the next question. */

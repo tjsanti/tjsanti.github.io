@@ -19,10 +19,10 @@ const responseFormat = {
   },
 };
 
-export interface GroqConfig { apiKey: string; model: string }
+export interface GatewayConfig { apiKey: string; model: string }
 
 /** The only provider boundary. No prompts, responses, or raw provider errors are logged. */
-export async function askGroq(messages: QAMessage[], config: GroqConfig, fetcher: typeof fetch = fetch): Promise<QAAnswer> {
+export async function askGateway(messages: QAMessage[], config: GatewayConfig, fetcher: typeof fetch = fetch): Promise<QAAnswer> {
   const signal = AbortSignal.timeout(12000);
   const body = JSON.stringify({
     model: config.model,
@@ -30,12 +30,12 @@ export async function askGroq(messages: QAMessage[], config: GroqConfig, fetcher
     response_format: responseFormat,
     reasoning_effort: 'low',
     include_reasoning: false,
-    max_completion_tokens: 2048,
+    max_tokens: 2048,
     stream: false,
   });
 
   for (let attempt = 0; attempt < 2; attempt++) {
-    const response = await fetcher('https://api.groq.com/openai/v1/chat/completions', {
+    const response = await fetcher('https://ai-gateway.vercel.sh/v1/chat/completions', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${config.apiKey}` },
       body,

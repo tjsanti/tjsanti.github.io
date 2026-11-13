@@ -1,7 +1,6 @@
 interface ImportMetaEnv {
   readonly QA_ENABLED?: string;
-  readonly GROQ_ZDR_ENABLED?: string;
-  readonly GROQ_API_KEY?: string;
-  readonly GROQ_MODEL?: string;
+  readonly AI_GATEWAY_API_KEY?: string;
+  readonly AI_GATEWAY_MODEL?: string;
   readonly VERCEL_ENV?: string;
 }

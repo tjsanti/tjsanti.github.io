@@ -2,6 +2,8 @@
 
 **Status:** Accepted
 
+**Provider update (2026-11-13):** Trevor selected the Vercel AI Gateway free tier and removed the ZDR requirement. [ADR 0004](../adr/0004-use-vercel-ai-gateway-with-standard-retention.md) supersedes the Groq-specific portion of ADR 0003.
+
 This specification defines the replacement for Trevor Santiago's current portfolio website. It covers the product, experience, architecture, delivery stages, and operating constraints. Selecting and writing the final portfolio content is a separate task.
 
 The vocabulary in [CONTEXT.md](../../CONTEXT.md) is authoritative. Architectural context is recorded in [ADR 0001](../adr/0001-use-a-game-led-entry-with-a-complete-profile.md), [ADR 0002](../adr/0002-use-one-portfolio-corpus.md), and [ADR 0003](../adr/0003-use-astro-phaser-and-a-stateless-ai-endpoint.md).
@@ -76,7 +78,7 @@ The Profile is the complete Core portfolio. It is not a summary, fallback page, 
 
 The Profile begins with information that can be scanned quickly and continues into technical depth. It contains direct access to Trevor's experience, projects, skills, education, resume, GitHub, LinkedIn, and contact path. It also contains Grounded Q&A.
 
-The Profile uses semantic, crawlable HTML. It must remain usable when JavaScript fails, the Game fails, Groq is unavailable, or optional analytics are blocked.
+The Profile uses semantic, crawlable HTML. It must remain usable when JavaScript fails, the Game fails, Vercel AI Gateway is unavailable, or optional analytics are blocked.
 
 The Profile shares the Game's colors, iconography, borders, and occasional pixel details. It remains a modern reading interface rather than imitating a game screen or rendering all content on fake parchment.
 
@@ -286,7 +288,7 @@ The assistant must not produce a fake numeric fit score, claim that Trevor will 
 
 ### Failure behavior
 
-When Groq is unavailable, times out, rejects the request, or reaches a quota, the interface states that Grounded Q&A is temporarily unavailable. It does not invent a response, imitate a successful model call, or replace the feature with a second provider.
+When Vercel AI Gateway is unavailable, times out, rejects the request, or reaches a quota, the interface states that Grounded Q&A is temporarily unavailable. It does not invent a response, imitate a successful model call, or replace the feature with another model or an independent application-level provider. AI Gateway may route the selected model among its upstream providers under its standard behavior; the application does not configure fallback models.
 
 The endpoint uses a short application timeout and bounded retries only for transient failures. It must not retry malformed input, authentication failures, or other non-transient client errors.
 
@@ -294,9 +296,9 @@ The endpoint uses a short application timeout and bounded retries only for trans
 
 The interface identifies the feature as AI-powered. Near the input, it tells Evaluators:
 
-- Their question is sent to Groq to generate an answer.
+- Their question and recent conversation are sent through Vercel AI Gateway to model providers to generate an answer.
 - Question and answer content is not stored by this site.
-- Groq Zero Data Retention is enabled.
+- Model providers may retain content under their policies; Zero Data Retention is not promised or required.
 - They should not submit confidential, sensitive, or personal information.
 
 The application must not log prompts, pasted job descriptions, or model responses. Aggregate service metadata may still exist at the providers and must not be described as message content.
@@ -347,7 +349,7 @@ The endpoint:
 3. Treats all visitor text as untrusted input.
 4. Adds a compact build-generated view of the approved Portfolio corpus.
 5. Adds the bounded current conversation.
-6. Calls Groq with a server-side environment variable.
+6. Calls Vercel AI Gateway with a server-side environment variable.
 7. Returns a grounded answer, evidence references, or a typed unavailable response.
 
 The API key must never appear in client code or generated static files.
@@ -371,7 +373,7 @@ Generation and validation run automatically during CI and local production build
 - Use Vercel's GitHub integration for Preview and Production deployments of this repository.
 - Use Vercel Hobby unless its practical limits later require a plan change.
 - Use separate Preview and Production environments.
-- Configure the Groq API key only in environments where Q&A should run.
+- Configure the Vercel AI Gateway API key only in environments where Q&A should run.
 - Keep the current custom domain.
 - Move DNS to the Public launch deployment when it is ready.
 - Do not expose the custom domain to an incomplete Foundation build.
@@ -381,9 +383,9 @@ Only Grounded Q&A requests consume Vercel function usage. Game code and assets r
 ## Security and abuse controls
 
 - Apply Vercel's included WAF rate-limit rule to `/api/ask`, initially around five requests per minute per IP.
-- Use a dedicated Groq project and key with conservative project limits.
+- Use a dedicated Vercel AI Gateway key with conservative spending and usage limits where available. Start with a model eligible for free Gateway credits and keep paid top-ups disabled for free-tier testing.
 - Cap individual message length, conversation length, total request size, and output tokens.
-- Validate and reject malformed requests before contacting Groq.
+- Validate and reject malformed requests before contacting Vercel AI Gateway.
 - Restrict the endpoint to expected content types and methods.
 - Do not expose stack traces, secrets, internal prompts, or raw provider errors.
 - Treat job descriptions and all visitor text as untrusted data.
@@ -401,9 +403,9 @@ Enable the free Vercel Web Analytics and Speed Insights features. Do not add:
 - Detailed player telemetry
 - Q&A text in URLs, event names, or analytics properties
 
-Use the free deployment, domain, and usage notifications included with Vercel. Subscribe to Vercel and Groq provider-status notifications if useful. No separate monitoring platform or custom monitoring system is required.
+Use the free deployment, domain, and usage notifications included with Vercel. Subscribe to Vercel and Vercel AI Gateway provider-status notifications if useful. No separate monitoring platform or custom monitoring system is required.
 
-The Core portfolio must continue to work when Groq or the Q&A endpoint is unavailable.
+The Core portfolio must continue to work when Vercel AI Gateway or the Q&A endpoint is unavailable.
 
 ## Delivery stages
 
@@ -493,7 +495,7 @@ Grounded Q&A may be enabled in Production after a separate Preview evaluation. I
 37. As a Q&A user, I want refresh to clear the conversation, so that the site does not imply durable chat storage.
 38. As a Q&A user, I want a clear unavailable state, so that a provider failure is not confused with an answer.
 39. As Trevor, I want rate and size limits on public AI requests, so that casual abuse does not consume the free quota.
-40. As Trevor, I want the Groq key held server-side, so that it never reaches public code.
+40. As Trevor, I want the Vercel AI Gateway key held server-side, so that it never reaches public code.
 41. As Trevor, I want machine-readable files generated automatically, so that content updates cannot leave stale agent-facing copies.
 42. As Trevor, I want preview deployments for incomplete work, so that Foundation builds never need the custom domain.
 43. As Trevor, I want Public launch readiness checked in CI, so that unfinished Exhibits and invalid content cannot reach recruiters accidentally.
@@ -533,7 +535,7 @@ Tests should observe behavior at the highest useful boundary. They should verify
 
 ### Grounded Q&A
 
-- Request validation rejects malformed methods, content types, bodies, excessive sizes, and excessive conversation context before a Groq call.
+- Request validation rejects malformed methods, content types, bodies, excessive sizes, and excessive conversation context before a Vercel AI Gateway call.
 - Provider credentials never appear in client bundles or returned errors.
 - A fixed evaluation set covers biography, project evidence, skills, missing information, unrelated questions, labeled inference, fit analysis, preference alignment, prompt injection inside a job description, and unavailable-provider behavior.
 - Substantive answers include evidence references.

@@ -6,10 +6,9 @@ import { JSDOM } from 'jsdom';
 
 const sentinel = 'qa-build-fake-key-never-publish';
 const cases = [
-  { name: 'disabled default', env: { VERCEL_ENV: 'preview', QA_ENABLED: '0', GROQ_ZDR_ENABLED: '0' }, live: false },
-  { name: 'enabled Preview', env: { VERCEL_ENV: 'preview', QA_ENABLED: '1', GROQ_ZDR_ENABLED: '1' }, live: true },
-  { name: 'unconfirmed ZDR', env: { VERCEL_ENV: 'preview', QA_ENABLED: '1', GROQ_ZDR_ENABLED: '0' }, live: false },
-  { name: 'Production even with opt-in', env: { VERCEL_ENV: 'production', QA_ENABLED: '1', GROQ_ZDR_ENABLED: '1' }, live: false },
+  { name: 'disabled default', env: { VERCEL_ENV: 'preview', QA_ENABLED: '0' }, live: false },
+  { name: 'enabled Preview', env: { VERCEL_ENV: 'preview', QA_ENABLED: '1' }, live: true },
+  { name: 'Production even with opt-in', env: { VERCEL_ENV: 'production', QA_ENABLED: '1' }, live: false },
 ];
 function verifyNoStaticKey(directory) {
   for (const entry of readdirSync(directory, { withFileTypes: true })) {
@@ -21,7 +20,7 @@ function verifyNoStaticKey(directory) {
 for (const scenario of cases) {
   try {
     execFileSync(process.execPath, [realpathSync('node_modules/.bin/astro'), 'build'], {
-      env: { ...process.env, ASTRO_TELEMETRY_DISABLED: '1', QA_DEMO: '0', GROQ_API_KEY: sentinel, ...scenario.env },
+      env: { ...process.env, ASTRO_TELEMETRY_DISABLED: '1', QA_DEMO: '0', AI_GATEWAY_API_KEY: sentinel, ...scenario.env },
       stdio: 'pipe',
     });
   } catch (error) {
@@ -35,7 +34,12 @@ for (const scenario of cases) {
     assert.equal(panel?.dataset.mode === 'live', scenario.live, `${scenario.name}: ${page} availability`);
     assert.equal(Boolean(dom.window.document.querySelector('[data-ask-form]')), scenario.live, `${scenario.name}: ${page} form`);
     assert.equal(dom.window.document.querySelector('[data-ask-failure]'), null, 'live/public builds must not expose canned failure controls');
-    if (scenario.live) assert.match(dom.window.document.querySelector('.ask-notice').textContent, /Groq Zero Data Retention is enabled/);
+    if (scenario.live) {
+      const notice = dom.window.document.querySelector('.ask-notice').textContent;
+      assert.match(notice, /Vercel AI Gateway/);
+      assert.match(notice, /Model providers may retain content/);
+      assert.doesNotMatch(notice, /Zero Data Retention is enabled/);
+    }
     dom.window.close();
   }
   const config = JSON.parse(readFileSync('.vercel/output/config.json', 'utf8'));
@@ -46,8 +50,13 @@ for (const scenario of cases) {
     import assert from 'node:assert/strict';
     import app from './.vercel/output/functions/_render.func/.vercel/output/server/entry.mjs';
     let calls = 0;
-    globalThis.fetch = async () => {
+    globalThis.fetch = async (url, options) => {
       calls++;
+      assert.equal(url, 'https://ai-gateway.vercel.sh/v1/chat/completions');
+      assert.equal(options.headers.Authorization, 'Bearer ${sentinel}');
+      const requestBody = JSON.parse(options.body);
+      assert.equal(requestBody.max_tokens, 2048);
+      assert.equal(requestBody.providerOptions, undefined);
       return Response.json({ choices: [{ finish_reason: 'stop', message: { content: JSON.stringify({
         status: 'answered', text: 'Known Fixes ranks parts for trouble codes.', evidenceIds: ['known-fixes']
       }) } }] });
@@ -62,7 +71,7 @@ for (const scenario of cases) {
     assert.equal(body.status, '${scenario.live ? 'answered' : 'unavailable'}');
     if (calls) assert.equal(body.citations[0].href, '/profile/#known-fixes');
   `], {
-    env: { ...process.env, GROQ_API_KEY: sentinel, ...scenario.env },
+    env: { ...process.env, AI_GATEWAY_API_KEY: sentinel, ...scenario.env },
     stdio: 'pipe',
   });
   verifyNoStaticKey('.vercel/output/static');

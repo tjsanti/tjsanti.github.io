@@ -1,3 +1,5 @@
 # Use Astro, Phaser, and a stateless AI endpoint
 
 The Portfolio will use Astro with TypeScript for static Profile pages, validated Portfolio corpus records, generated machine-readable files, and a single Vercel server endpoint; Phaser will own only the lazy-loaded Game world and pass Exhibit identifiers to ordinary HTML Evidence panels. The endpoint will send a compact build-generated view of the approved corpus and the current browser conversation to Groq without a database, vector retrieval, or persistent chat state. This choice was made from a blank-slate comparison with Next.js, Nuxt, SvelteKit, plain Vite, PixiJS, and custom Canvas: it keeps the conventional portfolio static and crawlable while containing the game engine and AI runtime to the two places that need them.
+
+The provider choice in this decision is superseded by [ADR 0004](0004-use-vercel-ai-gateway-with-standard-retention.md). The Astro, Phaser, corpus, and stateless endpoint architecture remains in effect.
