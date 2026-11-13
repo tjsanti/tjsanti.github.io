@@ -13,7 +13,7 @@ const { id = 'ask-preview', live = false } = Astro.props;
     <label for={`${id}-question`}>Your question</label>
     <textarea id={`${id}-question`} name="question" data-ask-input rows="3" maxlength={live ? MAX_QUESTION_CHARS : 2000} aria-describedby={`${id}-privacy`} placeholder="Ask about a project, skills, or experience…" required></textarea>
     <div class="ask-suggestions" aria-label="Suggested questions">
-      <button type="button" data-ask-suggestion="What is NormFlow?">What is NormFlow?</button>
+      <button type="button" data-ask-suggestion="What is Repair Trends?">What is Repair Trends?</button>
       <button type="button" data-ask-suggestion="What skills does Trevor use?">What skills are listed?</button>
     </div>
     <div class="ask-actions"><button class="ask-submit" type="submit" data-ask-submit>Ask question <span aria-hidden="true">↗</span></button><button type="button" data-ask-reset>Reset conversation</button></div>

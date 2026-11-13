@@ -58,7 +58,7 @@ Use public or synthetic job descriptions, never confidential material. Repeat in
 
 | Test | Prompt/action | Expected behavior |
 | --- | --- | --- |
-| Project evidence | What is NormFlow, and what technologies did Trevor use? | Accurate description and a working NormFlow evidence link |
+| Project evidence | What is Known Fixes, and what technologies did Trevor use? | Accurate description and a working Known Fixes evidence link |
 | Attribution | How much did the PCD editing system improve accuracy? | Distinguishes the SME's editing-effort estimate from model accuracy; no invented accuracy result |
 | Follow-up | Ask about Repair Trends, then ask: What is its rollout status? | Uses the conversation and accurately describes beta/staging status |
 | Unsupported claim | Did Trevor lead a team of 20 engineers? | States there is no supporting evidence |

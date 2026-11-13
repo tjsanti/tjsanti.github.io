@@ -1,4 +1,4 @@
-/** Approved Portfolio content, reviewed by Trevor through October 5, 2026. */
+/** Approved Portfolio content, with positioning and project selection updated November 13, 2026. */
 export const previewNotice = 'Explore the work in the Profile or Game. AI Q&A is under construction.';
 
 export interface Credential { id: string; title: string; organization: string; period: string }
@@ -23,8 +23,8 @@ export interface Portfolio {
 
 export const portfolio: Portfolio = {
   "name": "Trevor Santiago",
-  "title": "Applied AI engineer",
-  "tagline": "I build AI applications that turn messy data into useful tools.",
+  "title": "Data Scientist",
+  "tagline": "My work spans LLM applications, semantic retrieval, and production data pipelines.",
   "location": "Sacramento, California",
   "workAuthorization": "US citizen, no sponsorship required.",
   "languages": [
@@ -35,8 +35,7 @@ export const portfolio: Portfolio = {
   ],
   "about": [
     "I'm Trevor Santiago, a data scientist at ALLDATA building AI applications and data workflows. My recent work includes Gemini-powered services, semantic retrieval, and tools that help subject-matter experts reuse prior edits and review AI-generated drafts.",
-    "I like taking an unclear problem through research, prototyping, and implementation. At ALLDATA, that has meant working directly with subject-matter experts, building FastAPI services on Google Cloud, and checking model output against the cases those experts care about.",
-    "Outside work, I built NormFlow, a text-normalization workbench that combines exact matching, semantic retrieval, and optional LLM suggestions with batch processing and human review."
+    "I like taking an unclear problem through research, prototyping, and implementation. At ALLDATA, that has meant working directly with subject-matter experts, building FastAPI services on Google Cloud, and checking model output against the cases those experts care about."
   ],
   "experience": [
     {
@@ -67,27 +66,6 @@ export const portfolio: Portfolio = {
     }
   ],
   "projects": [
-    {
-      "id": "normflow",
-      "title": "NormFlow",
-      "organization": "Independent project",
-      "featured": true,
-      "summary": "A text-normalization workbench with exact matching, semantic retrieval, optional LLM fallback, and human review.",
-      "detail": [
-        "I built and shipped NormFlow using Python, FastAPI, TypeScript, SQLite, and FAISS. It combines exact matching and semantic retrieval with optional LLM fallback.",
-        "Durable batch, review, and export workflows keep human review and correction within the process of turning raw text into reusable normalized data."
-      ],
-      "tags": [
-        "Python",
-        "FastAPI",
-        "TypeScript",
-        "SQLite",
-        "FAISS",
-        "Semantic retrieval",
-        "Human review"
-      ],
-      "repository": "https://github.com/tjsanti/NormFlow"
-    },
     {
       "id": "probable-cause-editing",
       "title": "AI-assisted PCD editing",
@@ -147,7 +125,7 @@ export const portfolio: Portfolio = {
       "id": "known-fixes",
       "title": "Known Fixes",
       "organization": "ALLDATA",
-      "featured": false,
+      "featured": true,
       "summary": "A repair-intelligence pipeline combining dealership repair orders and expert-curated probable causes to rank parts associated with diagnostic trouble codes.",
       "detail": [
         "I owned the pipeline for a third-party dataset containing billions of dealership repair-order records. I used Gemini with web-search grounding to standardize part descriptions before ACES mapping. Inputs included vehicle details, part numbers, and mechanic descriptions.",

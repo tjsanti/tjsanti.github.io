@@ -49,18 +49,18 @@ for (const scenario of cases) {
     globalThis.fetch = async () => {
       calls++;
       return Response.json({ choices: [{ finish_reason: 'stop', message: { content: JSON.stringify({
-        status: 'answered', text: 'NormFlow uses FAISS.', evidenceIds: ['normflow']
+        status: 'answered', text: 'Known Fixes ranks parts for trouble codes.', evidenceIds: ['known-fixes']
       }) } }] });
     };
     const response = await app.fetch(new Request('https://preview.example/api/ask', {
       method: 'POST', headers: { 'Content-Type': 'application/json', Origin: 'https://preview.example' },
-      body: JSON.stringify({ messages: [{ role: 'user', text: 'What is NormFlow?' }] })
+      body: JSON.stringify({ messages: [{ role: 'user', text: 'What is Known Fixes?' }] })
     }));
     assert.equal(response.status, ${scenario.live ? 200 : 503});
     assert.equal(calls, ${scenario.live ? 1 : 0});
     const body = await response.json();
     assert.equal(body.status, '${scenario.live ? 'answered' : 'unavailable'}');
-    if (calls) assert.equal(body.citations[0].href, '/profile/#normflow');
+    if (calls) assert.equal(body.citations[0].href, '/profile/#known-fixes');
   `], {
     env: { ...process.env, GROQ_API_KEY: sentinel, ...scenario.env },
     stdio: 'pipe',

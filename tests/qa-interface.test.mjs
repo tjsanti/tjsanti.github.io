@@ -3,13 +3,13 @@ import test from 'node:test';
 import { JSDOM } from 'jsdom';
 
 const turn = () => new Promise(resolve => setTimeout(resolve, 0));
-const answer = (text = 'NormFlow uses FAISS.') => Response.json({ status: 'answered', text, citations: [{ label: 'NormFlow', href: '/profile/#normflow' }] });
+const answer = (text = 'Known Fixes ranks parts for trouble codes.') => Response.json({ status: 'answered', text, citations: [{ label: 'Known Fixes', href: '/profile/#known-fixes' }] });
 
 function markup(mode) {
   return `<section data-ask-panel data-mode="${mode}">
     <div data-ask-conversation><p class="ask-welcome">Welcome</p></div>
     <form data-ask-form><textarea data-ask-input></textarea><button data-ask-submit>Ask</button>
-    <button type="button" data-ask-reset>Reset</button><button type="button" data-ask-suggestion="What is NormFlow?">Suggestion</button>
+    <button type="button" data-ask-reset>Reset</button><button type="button" data-ask-suggestion="What is Known Fixes?">Suggestion</button>
     <p data-ask-status></p></form>${mode === 'demo' ? '<button data-ask-failure>Fail next reply</button>' : ''}</section>`;
 }
 
@@ -28,14 +28,14 @@ test('shared Q&A interface supports follow-ups, safe rendering, retries, reset, 
   const submit = (panel = live) => panel.querySelector('form').dispatchEvent(new dom.window.Event('submit', { bubbles: true, cancelable: true }));
 
   live.querySelector('[data-ask-suggestion]').click();
-  assert.equal(input.value, 'What is NormFlow?');
+  assert.equal(input.value, 'What is Known Fixes?');
   assert.equal(calls.length, 0, 'suggestions only fill the input');
   submit();
   submit();
   await turn();
   assert.equal(calls.length, 1, 'pending requests cannot be submitted twice');
   assert.equal(input.value, '');
-  assert.equal(live.querySelector('.ask-citations a').getAttribute('href'), '/profile/#normflow');
+  assert.equal(live.querySelector('.ask-citations a').getAttribute('href'), '/profile/#known-fixes');
   assert.equal(live.querySelectorAll('.ask-message').length, 2);
 
   input.value = 'Tell me more';
@@ -81,13 +81,13 @@ test('shared Q&A interface supports follow-ups, safe rendering, retries, reset, 
 
   const providerCalls = calls.length;
   const demoInput = demo.querySelector('textarea');
-  demoInput.value = 'What is NormFlow?';
+  demoInput.value = 'What is Known Fixes?';
   submit(demo);
   await new Promise(resolve => setTimeout(resolve, 500));
-  assert.match(demo.textContent, /FAISS/);
+  assert.match(demo.textContent, /ACES/);
   demoInput.value = 'Tell me more';
   submit(demo);
   await new Promise(resolve => setTimeout(resolve, 500));
-  assert.match(demo.querySelector('.ask-message:last-child').textContent, /FAISS/);
+  assert.match(demo.querySelector('.ask-message:last-child').textContent, /ACES/);
   assert.equal(calls.length, providerCalls, 'demo never contacts a provider');
 });

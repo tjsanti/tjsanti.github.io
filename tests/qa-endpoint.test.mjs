@@ -4,10 +4,10 @@ import { handleAsk } from '../src/server/ask-handler.ts';
 import { buildConversation, isQAEnabled } from '../src/lib/qa.ts';
 
 const env = { QA_ENABLED: '1', GROQ_ZDR_ENABLED: '1', GROQ_API_KEY: 'test-key', VERCEL_ENV: 'preview' };
-const request = (messages = [{ role: 'user', text: 'What is NormFlow?' }], options = {}) => new Request('https://preview.example/api/ask', {
+const request = (messages = [{ role: 'user', text: 'What is Known Fixes?' }], options = {}) => new Request('https://preview.example/api/ask', {
   method: 'POST', headers: { 'Content-Type': 'application/json', Origin: 'https://preview.example' }, body: JSON.stringify({ messages }), ...options,
 });
-const completion = (answer = { status: 'answered', text: 'NormFlow uses FAISS.', evidenceIds: ['normflow'] }, finish_reason = 'stop') => Response.json({ choices: [{ finish_reason, message: { content: JSON.stringify(answer) } }] });
+const completion = (answer = { status: 'answered', text: 'Known Fixes ranks parts for trouble codes.', evidenceIds: ['known-fixes'] }, finish_reason = 'stop') => Response.json({ choices: [{ finish_reason, message: { content: JSON.stringify(answer) } }] });
 const mustNotCall = async () => { assert.fail('Invalid or disabled requests must never contact Groq'); };
 
 test('Q&A needs explicit opt-in and confirmed ZDR, and cannot run in Production', async () => {
@@ -29,22 +29,22 @@ test('grounded answers send approved context and map evidence IDs to trusted lin
     const body = JSON.parse(options.body);
     assert.equal(body.model, 'openai/gpt-oss-120b');
     assert.match(body.messages[0].content, /APPROVED PORTFOLIO EVIDENCE/);
-    assert.match(body.messages[0].content, /NormFlow/);
+    assert.match(body.messages[0].content, /Known Fixes/);
     assert.match(body.messages[0].content, /untrusted conversation data/);
     assert.match(body.messages[0].content, /Preference alignment/);
     assert.equal(body.response_format.json_schema.strict, true);
-    assert.deepEqual(body.messages.at(-1), { role: 'user', content: 'What is NormFlow?' });
+    assert.deepEqual(body.messages.at(-1), { role: 'user', content: 'What is Known Fixes?' });
     assert.equal(body.max_completion_tokens, 2048);
     assert.equal(body.tools, undefined);
     return completion();
   });
   assert.equal(response.status, 200);
   assert.equal(response.headers.get('cache-control'), 'no-store');
-  assert.deepEqual(await response.json(), { status: 'answered', text: 'NormFlow uses FAISS.', citations: [{ label: 'NormFlow', href: '/profile/#normflow' }] });
+  assert.deepEqual(await response.json(), { status: 'answered', text: 'Known Fixes ranks parts for trouble codes.', citations: [{ label: 'Known Fixes', href: '/profile/#known-fixes' }] });
 });
 
 test('a configured model and bounded follow-up reach the provider', async () => {
-  const messages = [{ role: 'user', text: 'What is NormFlow?' }, { role: 'assistant', text: 'NormFlow uses FAISS.' }, { role: 'user', text: 'Tell me more' }];
+  const messages = [{ role: 'user', text: 'What is Known Fixes?' }, { role: 'assistant', text: 'Known Fixes ranks parts for trouble codes.' }, { role: 'user', text: 'Tell me more' }];
   await handleAsk(request(messages), { ...env, GROQ_MODEL: 'openai/gpt-oss-20b' }, async (_, options) => {
     const body = JSON.parse(options.body);
     assert.equal(body.model, 'openai/gpt-oss-20b');
@@ -80,7 +80,7 @@ test('invalid shapes, injected roles, blank and oversized conversations never re
 });
 
 test('unknown evidence, uncited claims, malformed and truncated answers fail closed', async () => {
-  const answers = [null, {}, { status: 'answered', text: 'An unsupported claim', evidenceIds: [] }, { status: 'answered', text: 'A claim', evidenceIds: ['javascript:alert(1)'] }, { status: 'answered', text: 'x'.repeat(6001), evidenceIds: ['normflow'] }, { status: 'answered', text: ' ', evidenceIds: ['normflow'] }];
+  const answers = [null, {}, { status: 'answered', text: 'An unsupported claim', evidenceIds: [] }, { status: 'answered', text: 'A claim', evidenceIds: ['javascript:alert(1)'] }, { status: 'answered', text: 'x'.repeat(6001), evidenceIds: ['known-fixes'] }, { status: 'answered', text: ' ', evidenceIds: ['known-fixes'] }];
   for (const answer of answers) assert.equal((await handleAsk(request(), env, async () => completion(answer))).status, 503);
   assert.equal((await handleAsk(request(), env, async () => completion(undefined, 'length'))).status, 503);
   assert.equal((await handleAsk(request(), env, async () => new Response('not JSON'))).status, 503);
