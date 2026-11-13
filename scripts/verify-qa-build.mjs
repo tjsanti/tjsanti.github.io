@@ -5,16 +5,17 @@ import { join } from 'node:path';
 import { JSDOM } from 'jsdom';
 
 const sentinel = 'qa-build-fake-key-never-publish';
+const runtimeKey = 'qa-runtime-fake-key-only';
 const cases = [
   { name: 'disabled default', env: { VERCEL_ENV: 'preview', QA_ENABLED: '0' }, live: false },
   { name: 'enabled Preview', env: { VERCEL_ENV: 'preview', QA_ENABLED: '1' }, live: true },
   { name: 'Production even with opt-in', env: { VERCEL_ENV: 'production', QA_ENABLED: '1' }, live: false },
 ];
-function verifyNoStaticKey(directory) {
+function verifyNoBundledKey(directory) {
   for (const entry of readdirSync(directory, { withFileTypes: true })) {
     const path = join(directory, entry.name);
-    if (entry.isDirectory()) verifyNoStaticKey(path);
-    else if (/\.(html|js|json|map)$/.test(path)) assert.ok(!readFileSync(path, 'utf8').includes(sentinel), `Key leaked in ${path}`);
+    if (entry.isDirectory()) verifyNoBundledKey(path);
+    else if (/\.(html|[cm]?js|json|map)$/.test(path)) assert.ok(!readFileSync(path, 'utf8').includes(sentinel), `Build-time key embedded in ${path}`);
   }
 }
 for (const scenario of cases) {
@@ -45,6 +46,7 @@ for (const scenario of cases) {
   const config = JSON.parse(readFileSync('.vercel/output/config.json', 'utf8'));
   assert.ok(config.routes.some(route => route.dest === '_render' && new RegExp(route.src).test('/api/ask')), 'API must route to a Vercel function');
   assert.ok(readdirSync('.vercel/output/functions').includes('_render.func'));
+  verifyNoBundledKey('.vercel/output');
   // Exercise Astro routing and runtime env handling in the actual function bundle.
   execFileSync(process.execPath, ['--input-type=module', '-e', `
     import assert from 'node:assert/strict';
@@ -53,7 +55,7 @@ for (const scenario of cases) {
     globalThis.fetch = async (url, options) => {
       calls++;
       assert.equal(url, 'https://ai-gateway.vercel.sh/v1/chat/completions');
-      assert.equal(options.headers.Authorization, 'Bearer ${sentinel}');
+      assert.equal(options.headers.Authorization, 'Bearer ${runtimeKey}');
       const requestBody = JSON.parse(options.body);
       assert.equal(requestBody.max_tokens, 2048);
       assert.equal(requestBody.providerOptions, undefined);
@@ -70,10 +72,20 @@ for (const scenario of cases) {
     const body = await response.json();
     assert.equal(body.status, '${scenario.live ? 'answered' : 'unavailable'}');
     if (calls) assert.equal(body.citations[0].href, '/profile/#known-fixes');
+
+    // Removing the runtime key must fail closed, even though a key was present during the build.
+    delete process.env.AI_GATEWAY_API_KEY;
+    const callsBeforeMissingKey = calls;
+    const missingKeyResponse = await app.fetch(new Request('https://preview.example/api/ask', {
+      method: 'POST', headers: { 'Content-Type': 'application/json', Origin: 'https://preview.example' },
+      body: JSON.stringify({ messages: [{ role: 'user', text: 'What is Known Fixes?' }] })
+    }));
+    assert.equal(missingKeyResponse.status, 503);
+    assert.equal((await missingKeyResponse.json()).status, 'unavailable');
+    assert.equal(calls, callsBeforeMissingKey);
   `], {
-    env: { ...process.env, AI_GATEWAY_API_KEY: sentinel, ...scenario.env },
+    env: { ...process.env, AI_GATEWAY_API_KEY: runtimeKey, ...scenario.env },
     stdio: 'pipe',
   });
-  verifyNoStaticKey('.vercel/output/static');
-  console.log(`Verified ${scenario.name}: Profile, Game, function execution, and no static API key.`);
+  console.log(`Verified ${scenario.name}: Profile, Game, runtime-only key, and no key in static or server artifacts.`);
 }

@@ -35,6 +35,8 @@ Leave `QA_DEMO` unset. Remove obsolete `GROQ_API_KEY`, `GROQ_MODEL`, and `GROQ_Z
 
 `QA_ENABLED=1` enables the Preview form. Leaving it unset or setting it to `0` keeps the public under-construction panel. Missing/invalid credentials produce the unavailable state. Changing flags requires a fresh deployment because the pages are prerendered. Changing the key or model should also be followed by a fresh deployment so the UI and function use one consistent configuration.
 
+Built Preview and Production functions read the key from runtime environment variables only; the key is not compiled into browser or server artifacts. The deployment checks scan both kinds of artifact and verify that removing a runtime key disables requests. Only the local dev server uses a development-only fallback for `.env.local` values.
+
 ## 4. Deploy this branch as Preview
 
 1. The branch must be pushed to GitHub: `git push -u origin feat/groq-qa-preview` if it is not there already.
