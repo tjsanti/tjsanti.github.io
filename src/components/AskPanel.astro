@@ -1,11 +1,13 @@
 ---
-import AskDemo from './AskDemo.astro';
+import AskConversation from './AskConversation.astro';
+import { qaEnabledForBuild } from '../server/qa-config';
 interface Props { id?: string }
 const { id = 'ask' } = Astro.props;
+const live = qaEnabledForBuild;
 const showDemo = import.meta.env.QA_DEMO === '1' && import.meta.env.VERCEL_ENV !== 'production';
 ---
 
-{showDemo ? <AskDemo id={id} /> : <section class="ask-construction" aria-labelledby={`${id}-title`}>
+{live || showDemo ? <AskConversation id={id} live={live} /> : <section class="ask-construction" aria-labelledby={`${id}-title`}>
   <p class="construction-label">UNDER CONSTRUCTION</p>
   <h3 id={`${id}-title`}>AI Q&A is on the way.</h3>
   <p>I'm building and testing a Q&A that answers questions about my work and links to the supporting evidence.</p>
